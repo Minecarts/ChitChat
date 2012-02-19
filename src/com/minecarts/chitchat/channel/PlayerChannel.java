@@ -1,6 +1,7 @@
 package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
+import com.minecarts.chitchat.manager.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -12,6 +13,7 @@ public class PlayerChannel{
     private BaseChannel baseChannel;
     private Player player;
     private String prefix;
+    private boolean shouldFilter = true;
     private final Random random = new Random();
     private final ChatColor[] colors = {ChatColor.GOLD, ChatColor.RED, ChatColor.GREEN, ChatColor.LIGHT_PURPLE, ChatColor.DARK_GREEN, ChatColor.DARK_RED};
 
@@ -19,7 +21,7 @@ public class PlayerChannel{
         this.player = player;
         this.prefix = prefix;
         this.baseChannel = ChannelManager.getChannelByName(name);
-        this.joinPlayer(player);
+        this.join();
     }
 
     public PlayerChannel(Player player, String name){
@@ -32,37 +34,39 @@ public class PlayerChannel{
         }
         this.player = player;
         this.baseChannel = ChannelManager.getChannelByName(name);
-        this.joinPlayer(player);
+        this.join();
     }
     
     public Player getPlayer(){
         return this.player;
     }
     
-    public void joinPlayer(Player player){
-        if(baseChannel.isPlayerInChannel(player)){
-            player.sendMessage(getFormattedEvent("You are already in this channel ("+this.baseChannel.getName()+")."));
+    public void join(){
+        if(baseChannel.isPlayerInChannel(this.player)){
+            this.player.sendMessage(getFormattedEvent("You are already in this channel ("+this.baseChannel.getName()+")."));
             return;
         }
 
-        this.baseChannel.joinPlayer(player,this);
-        ChannelManager.markPrefixUsed(player,this.prefix);
+        this.baseChannel.joinPlayer(this.player,this);
+        ChannelManager.markPrefixUsed(this.player,this.prefix);
+        ChannelManager.addPlayerChannel(player,this);
 
         player.sendMessage(getFormattedEvent("You joined the channel ("+this.baseChannel.getName()+")."));
-        this.baseChannel.broadcastExceptPlayer(player,player.getDisplayName() + " joined the channel.");
+        this.baseChannel.broadcastExceptPlayer(this.player,this.player.getDisplayName() + " joined the channel.");
     }
     
-    public void leavePlayer(Player player){
-        if(!baseChannel.isPlayerInChannel(player)){
-            player.sendMessage(getFormattedEvent("You are not in that channel ("+this.baseChannel.getName()+")."));
+    public void leave(){
+        if(!baseChannel.isPlayerInChannel(this.player)){
+            this.player.sendMessage(getFormattedEvent("You are not in that channel ("+this.baseChannel.getName()+")."));
             return;
         }
 
-        this.baseChannel.leavePlayer(player);
-        ChannelManager.markPrefixAvailable(player, this.prefix);
+        this.baseChannel.leavePlayer(this.player);
+        ChannelManager.removePlayerChannel(player,this);
+        ChannelManager.markPrefixAvailable(this.player, this.prefix);
 
         player.sendMessage(getFormattedEvent("You left the channel ("+this.baseChannel.getName()+")."));
-        this.baseChannel.broadcastExceptPlayer(player,player.getDisplayName() + " left the channel.");
+        this.baseChannel.broadcastExceptPlayer(this.player,this.player.getDisplayName() + " left the channel.");
     }
 
 
@@ -99,12 +103,13 @@ public class PlayerChannel{
         if(this.prefix == "g") return ChatColor.GOLD;
         if(this.prefix == "!") return ChatColor.RED;
         if(this.prefix == "$") return ChatColor.GREEN;
+        if(this.prefix == "@") return ChatColor.YELLOW;
         try{
             Integer index = Integer.parseInt(this.prefix);
             return colors[index % colors.length];
         } catch (NumberFormatException e){
             System.out.println("ChitChat> Prefix was not able to be colored" + this.prefix);
-            return ChatColor.BLACK;
+            return ChatColor.WHITE;
         } 
     }
     
@@ -116,11 +121,19 @@ public class PlayerChannel{
         this.player.sendMessage(getFormattedEvent(message));
     }
     public void sendMessage(Player player, String message){
-        this.player.sendMessage(getFormattedMessage(player,message));
+        String filteredMessage = message;
+        if(shouldFilter){
+            filteredMessage = LanguageManager.filter(getColor(),message);
+        }
+        this.player.sendMessage(getFormattedMessage(player,filteredMessage));
     }
 
     public void setDefault(){
         player.sendMessage(ChatColor.DARK_GRAY + "/" + prefix + " "+baseChannel.getName()+" is now your default channel.");
         ChannelManager.setDefaultPlayerChannel(this.player,this);
+    }
+    
+    public Boolean isDefault(){
+        return (ChannelManager.getDefaultPlayerChannel(this.player) == this);
     }
 }

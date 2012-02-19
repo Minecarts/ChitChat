@@ -1,14 +1,11 @@
 package com.minecarts.chitchat;
 
-import com.minecarts.chitchat.channel.BaseChannel;
 import com.minecarts.chitchat.channel.PlayerChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
-import com.minecarts.chitchat.command.JoinCommand;
+import com.minecarts.chitchat.command.*;
 import com.minecarts.dbquery.DBQuery;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,13 +27,18 @@ public class ChitChat extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this,this);
         //Register our commands
             getCommand("join").setExecutor(new JoinCommand());
+            getCommand("leave").setExecutor(new LeaveCommand());
+            getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels
         for(Player player : Bukkit.getOnlinePlayers()){
-            ChannelManager.addPlayerChannel(player, new PlayerChannel(player, "Global", "g"));
-            ChannelManager.addPlayerChannel(player, new PlayerChannel(player, "Announce", "!"));
+            new PlayerChannel(player, "Global", "g");
+            new PlayerChannel(player, "Announce", "!");
             if(player.hasPermission("subscriber")){
-                ChannelManager.addPlayerChannel(player, new PlayerChannel(player, "Subscriber", "$"));
+               new PlayerChannel(player, "Subscriber", "$");
+            }
+            if(player.hasPermission("chitchat.admin.chat")){
+                new PlayerChannel(player, "Admin", "@");
             }
         }
     }
@@ -94,13 +96,15 @@ public class ChitChat extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e){
         for(PlayerChannel channel : ChannelManager.getPlayerChannels(e.getPlayer())){
-            channel.leavePlayer(e.getPlayer());
+            channel.leave();
         }
     }
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
-        for(PlayerChannel channel : ChannelManager.getPlayerChannels(e.getPlayer())){
-            channel.leavePlayer(e.getPlayer());
+        ArrayList<PlayerChannel> channels = ChannelManager.getPlayerChannels(e.getPlayer());
+        if(channels == null) return;
+        for(PlayerChannel channel : channels){
+            channel.leave();
         }
     }
 

@@ -44,6 +44,13 @@ public class ChannelManager {
         }
         playerChannelList.get(p).add(ch);
     }
+    
+    public static void removePlayerChannel(Player p, PlayerChannel ch){
+        if(!playerChannelList.containsKey(p)){
+            return;
+        }
+        playerChannelList.get(p).remove(ch);
+    }
 
 
     public static ArrayList<PlayerChannel> getPlayerChannels(Player p){

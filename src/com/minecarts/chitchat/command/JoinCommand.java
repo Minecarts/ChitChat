@@ -20,7 +20,6 @@ public class JoinCommand implements CommandExecutor {
                     Player player = (Player)sender;
                     //TODO: Add check for certain things, like numetic only channels, etc
                     PlayerChannel selfChannel = new PlayerChannel(player,args[0]);
-                    ChannelManager.addPlayerChannel(player,selfChannel);
                     selfChannel.setDefault();
 
                     return true;
@@ -33,7 +32,6 @@ public class JoinCommand implements CommandExecutor {
                     }
                     Player targetPlayer = players.get(0);
                     PlayerChannel forceChannel = new PlayerChannel(targetPlayer,args[1]);
-                    ChannelManager.addPlayerChannel(targetPlayer,forceChannel);
                     forceChannel.setDefault();
 
                     sender.sendMessage("Force joined " + targetPlayer.getDisplayName() + " to " + args[1]);

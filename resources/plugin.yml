@@ -6,13 +6,45 @@ author: Verrier
 depend: [DBQuery]
 description: An improved chat plugin
 commands:
+    channel:
+        description: The main command to access all BarrensChat internal commands
+        usage: /<command>
+    whisper:
+        aliases: [w,msg,t,m,tell]
+        description: Privately message a player
+        usage: /<command> [player] [msg]
+    say:
+        aliases: [s]
+        description: Chat with players nearby
+        usage: /<command> [player] [msg]
     join:
-        description: "Join a channel by it's name"
-        usage: "/join [channel name]"
+        description: Join a channel by its name
+        usage: /<command> [channel]
+    leave:
+        description: Leave a given channel
+        usage: /<command> [channel]
+    reply:
+        aliases: [r]
+        description: Respond to the last person to whisper you
+        usage: /<command> [msg]
+    rewhisper:
+        aliases: [rw]
+        description: Resends a whisper to the last person you whispered
+        usage: /<command> [msg]
+    ignore:
+        aliases: [unignore, block, unblock]
+        description: Toggle if you see a players messages or not
+        usage: /<command> [player]
 permissions:
+    chitchat.admin.chat:
+        description: "Allows a player to chat in administrative channels"
+        default: op
     chitchat.channel.chat:
         description: "Allow a player to chat in a channel"
         default: true
     chitchat.channel.join:
         description: "Allow a player to join channels"
         default: true
+    chitchat.who.detail:
+        description: "Show detailed who info"
+        default: op
