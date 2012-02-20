@@ -1,10 +1,14 @@
 package com.minecarts.chitchat;
 
-import com.minecarts.chitchat.channel.PlayerChannel;
+import com.minecarts.chitchat.channel.Channel;
+import com.minecarts.chitchat.channel.LocalChannel;
+import com.minecarts.chitchat.channel.PrefixChannel;
+import com.minecarts.chitchat.channel.PermanentChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.command.*;
 import com.minecarts.dbquery.DBQuery;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,21 +32,15 @@ public class ChitChat extends JavaPlugin implements Listener {
         //Register our commands
             getCommand("join").setExecutor(new JoinCommand());
             getCommand("leave").setExecutor(new LeaveCommand());
-            getCommand("who").setExecutor(new WhoCommand());
+            //getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels
         for(Player player : Bukkit.getOnlinePlayers()){
-            new PlayerChannel(player, "Global", "g");
-            new PlayerChannel(player, "Announce", "!");
-            if(player.hasPermission("subscriber")){
-               new PlayerChannel(player, "Subscriber", "$");
-            }
-            if(player.hasPermission("chitchat.admin.chat")){
-                new PlayerChannel(player, "Admin", "@");
-            }
+            joinPlayerToStaticChannels(player);
+            joinPlayerToDynamicChannels(player);
         }
-    }
 
+    }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event){
@@ -54,22 +52,21 @@ public class ChitChat extends JavaPlugin implements Listener {
         String prefix = args[0].replaceAll("/", "");
         String message = args[1];
 
-        PlayerChannel channel = ChannelManager.getPlayerChannelFromPrefix(player,prefix);
+        PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, prefix);
         if(channel == null){
             return; //Don't handle it, it's probably not a channel index
         }
-        channel.getBaseChannel().sendMessage(player,message);
+        //channel.getBaseChannel().sendMessage(player,message);
         channel.setDefault();
+        Bukkit.getPluginManager().callEvent(new PlayerChatEvent(player,message)); //Send it via a player chat event
         event.setCancelled(true); //Cancel the event becuase we handled it
     }
 
     @EventHandler
     public void onPlayerChat(PlayerChatEvent e){
-        //s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-        PlayerChannel channel = ChannelManager.getDefaultPlayerChannel(e.getPlayer());
-        e.setFormat(channel.getMinecraftFormat());
-        e.getRecipients().clear();
-        e.getRecipients().addAll(channel.getBaseChannel().getMembers());
+        Channel channel = ChannelManager.getDefaultPlayerChannel(e.getPlayer());
+        channel.broadcast(e.getPlayer(), e.getMessage());
+        e.setCancelled(true);
     }
     
 
@@ -77,34 +74,48 @@ public class ChitChat extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player player = e.getPlayer();
         //Query the channels for this player and join them to them, in addition to global and announce
-        ChannelManager.addPlayerChannel(player,new PlayerChannel(player,"Global","g"));
-        ChannelManager.addPlayerChannel(player,new PlayerChannel(player,"Announce","!"));
-        if(player.hasPermission("subscriber")){
-            ChannelManager.addPlayerChannel(player, new PlayerChannel(player, "Subscriber", "$"));
-        }
-
-        new Query("SELECT * FROM `player_channels` WHERE `playerName` = ?") {
-            @Override
-            public void onFetch(ArrayList<HashMap> rows) {
-                if(rows == null || rows.size() == 0) return;
-                for(HashMap row : rows){
-                    ChannelManager.addPlayerChannel(player,new PlayerChannel(player,(String)row.get("channelName"),row.get("channelIndex").toString()));
-                }
-            }
-        }.fetch(e.getPlayer().getName());
+        joinPlayerToStaticChannels(player);
+        joinPlayerToDynamicChannels(player);
     }
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e){
-        for(PlayerChannel channel : ChannelManager.getPlayerChannels(e.getPlayer())){
+        for(Channel channel : ChannelManager.getPlayerChannels(e.getPlayer())){
             channel.leave();
         }
     }
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
-        ArrayList<PlayerChannel> channels = ChannelManager.getPlayerChannels(e.getPlayer());
+        ArrayList<Channel> channels = ChannelManager.getPlayerChannels(e.getPlayer());
         if(channels == null) return;
-        for(PlayerChannel channel : channels){
+        for(Channel channel : channels){
             channel.leave();
+        }
+    }
+
+
+
+    private void joinPlayerToDynamicChannels(final Player player){
+        new Query("SELECT * FROM `player_channels` WHERE `playerName` = ?") {
+            @Override
+            public void onFetch(ArrayList<HashMap> rows) {
+                if(rows == null || rows.size() == 0) return;
+                for(HashMap row : rows){
+                    PrefixChannel channel = new PrefixChannel(player,(String)row.get("channelName"),row.get("channelIndex").toString());
+                    channel.join();
+                }
+            }
+        }.fetch(player.getName());
+    }
+    private void joinPlayerToStaticChannels(Player player){
+        PrefixChannel global = new PermanentChannel(player, "Global", "g", ChatColor.GOLD);
+        PrefixChannel announce = new PermanentChannel(player, "Announce", "!", ChatColor.RED);
+        LocalChannel local = new LocalChannel(player);
+
+        if(player.hasPermission("subscriber")){
+            PrefixChannel subscriber = new PermanentChannel(player, "Subscriber", "$", ChatColor.GREEN);
+        }
+        if(player.hasPermission("chitchat.admin.chat")){
+            PrefixChannel admin = new PermanentChannel(player, "Admin", "@", ChatColor.YELLOW);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.minecarts.chitchat.command;
 
-import com.minecarts.chitchat.channel.PlayerChannel;
+import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,9 +15,9 @@ public class LeaveCommand implements CommandExecutor {
             sender.sendMessage("You cannot leave a channel as a non player");
             return true;
         }
-        PlayerChannel channel = ChannelManager.getPlayerChannelFromPrefix((Player)sender,args[0]);
-        if(channel.isDefault()){
-            ChannelManager.getPlayerChannelFromPrefix((Player)sender,"g").setDefault();
+        PrefixChannel channel = ChannelManager.getChannelFromPrefix((Player)sender,args[0]);
+        if(channel.isDefault()){ //Reset the default channel to global if they leave their default channel
+            ChannelManager.getChannelFromPrefix((Player)sender,"g").setDefault();
         }
         channel.leave();
         return true;

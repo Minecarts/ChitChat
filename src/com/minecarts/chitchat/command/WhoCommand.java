@@ -1,7 +1,7 @@
 package com.minecarts.chitchat.command;
 
-import com.minecarts.chitchat.channel.BaseChannel;
-import com.minecarts.chitchat.channel.PlayerChannel;
+import com.minecarts.chitchat.channel.ChannelLink;
+import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
 import org.bukkit.Bukkit;
@@ -35,13 +35,13 @@ public class WhoCommand implements CommandExecutor {
                 //Else try and match this arg to a player's channel
                 if(sender instanceof Player){
                     //By index
-                    PlayerChannel channel = ChannelManager.getPlayerChannelFromPrefix((Player)sender,args[1]);
-                    for(Player channelMember : channel.getBaseChannel().getMembers()){
+                    PrefixChannel channel = ChannelManager.getChannelFromPrefix((Player)sender,args[1]);
+                    for(Player channelMember : channel.getMembers()){
                         sender.sendMessage(channelMember.getDisplayName());
                     }
                     return true;
                 } else { //It's a console, so list the members of the channel, but by name
-                    BaseChannel channel = ChannelManager.getChannelByName(args[1]);
+                    ChannelLink channel = ChannelManager.getOrCreateChannelLink(args[1]);
                     if(channel == null){
                         sender.sendMessage("Unable to find a channel with the name: " + args[1]);
                         return true;

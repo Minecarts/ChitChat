@@ -1,6 +1,6 @@
 package com.minecarts.chitchat.command;
 
-import com.minecarts.chitchat.channel.PlayerChannel;
+import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -19,8 +19,16 @@ public class JoinCommand implements CommandExecutor {
 
                     Player player = (Player)sender;
                     //TODO: Add check for certain things, like numetic only channels, etc
-                    PlayerChannel selfChannel = new PlayerChannel(player,args[0]);
-                    selfChannel.setDefault();
+
+                    //TODO: Find a better way to do this, and or make these configuration values
+                    if(ChannelManager.isChannelNameJoinRestricted(args[0])){
+                        sender.sendMessage("Access to that channel is restricted.");
+                        return true;
+                    }
+
+                    PrefixChannel channel = new PrefixChannel(player,args[0]);
+                    channel.setDefault();
+                    channel.join();
 
                     return true;
                 case 2: //Force join a player
@@ -31,7 +39,7 @@ public class JoinCommand implements CommandExecutor {
                         return true;
                     }
                     Player targetPlayer = players.get(0);
-                    PlayerChannel forceChannel = new PlayerChannel(targetPlayer,args[1]);
+                    PrefixChannel forceChannel = new PrefixChannel(targetPlayer,args[1]);
                     forceChannel.setDefault();
 
                     sender.sendMessage("Force joined " + targetPlayer.getDisplayName() + " to " + args[1]);
