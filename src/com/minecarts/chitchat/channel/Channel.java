@@ -57,10 +57,16 @@ abstract public class Channel {
     }
     //Inbound
     public void display(Player player, String message){
-        getOwner().sendMessage(formatMessage(player, message));
+        String formattedMessage = formatMessage(player, message);
+        if(formattedMessage != null){
+            getOwner().sendMessage(formattedMessage);
+        }
     }
     public void display(String message){
-        getOwner().sendMessage(formatMessage(message));
+        String formattedMessage = formatMessage(message);
+        if(formattedMessage != null){
+            getOwner().sendMessage(formattedMessage);
+        }
     }
 
     abstract protected String formatMessage(String message);

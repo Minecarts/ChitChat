@@ -16,7 +16,7 @@ commands:
     say:
         aliases: [s]
         description: Chat with players nearby
-        usage: /<command> [player] [msg]
+        usage: /<command> [msg]
     join:
         description: Join a channel by its name
         usage: /<command> [channel]

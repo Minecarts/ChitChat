@@ -1,5 +1,6 @@
 package com.minecarts.chitchat.channel;
 
+import com.minecarts.chitchat.manager.ChannelManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -13,8 +14,16 @@ public class WhisperChannel extends Channel {
         super(source, "Whisper-"+source.getName()+"-"+destination.getName());
         this.source = source;
         this.destination = destination;
+
     }
-    
+
+    @Override
+    public void join(){
+        getLink().joinPlayer(source,this);
+        getLink().joinPlayer(destination,this);
+        ChannelManager.addPlayerChannel(source, this);
+        ChannelManager.addPlayerChannel(destination, this);
+    }
 
     public void sendMessage(Player player, String message){
         source.sendMessage(MessageFormat.format("{0}> [{1}{0}] {2}", ChatColor.DARK_AQUA, destination.getDisplayName(), message));

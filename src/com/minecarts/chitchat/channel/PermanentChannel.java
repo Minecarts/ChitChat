@@ -10,13 +10,15 @@ public class PermanentChannel extends PrefixChannel {
         super.join();
     }
 
+    /* Allow players to join and leave these channels
     @Override
     public void join(){
-        this.broadcast("You cannot join this channel.");
+        this.display("You cannot join this channel.");
     }
 
     @Override
     public void leave(){
-        this.broadcast("You cannot leave this channel.");
+        this.display("You can't leave this channel. Feel free to /ignore.");
     }
+    */
 }

@@ -32,6 +32,8 @@ public class ChitChat extends JavaPlugin implements Listener {
         //Register our commands
             getCommand("join").setExecutor(new JoinCommand());
             getCommand("leave").setExecutor(new LeaveCommand());
+            getCommand("say").setExecutor(new SayCommand());
+            getCommand("whisper").setExecutor(new WhisperCommand());
             //getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels

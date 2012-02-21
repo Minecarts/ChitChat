@@ -29,7 +29,7 @@ public class WhisperCommand implements CommandExecutor {
         } else if (numMatches == 1) {
             Player receiver = playermatches.get(0);
             WhisperChannel channel = new WhisperChannel((Player)sender,receiver);
-            channel.join();
+            channel.sendMessage((Player)sender,message);
             //channel.sendMessage((Player)sender,);
 
         } else {

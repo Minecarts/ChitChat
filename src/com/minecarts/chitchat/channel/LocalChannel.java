@@ -9,17 +9,34 @@ public class LocalChannel extends Channel{
 
     public LocalChannel(Player player){
         super(player, "Local");
+        super.join();
+    }
+
+    //Prevent anyone from joining or leaving this channel via command
+    @Override
+    public void join(){
+        this.display("You cannot join this channel.");
+    }
+    @Override
+    public void leave(){
+        this.display("You cannot leave this channel.");
     }
 
     protected String formatMessage(String message){
-        ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
-        return MessageFormat.format("LocalEvent: {0}",
+        return MessageFormat.format("{0}",
                 message
         );
     }
     protected String formatMessage(Player player, String message){
-        ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
-        return MessageFormat.format("Local: <{0}> {1}",
+        Double range = player.getLocation().distance(getOwner().getLocation());
+        if(range > 100) return null; //Null messages wont be displayed
+
+        //TODO, make these ranges a config value
+        ChatColor color = ChatColor.WHITE;
+        if(range > 75) color = ChatColor.DARK_GRAY;
+        else if(range > 50) color = ChatColor.GRAY;
+
+        return MessageFormat.format(color.toString() + Math.round(range) + ": <{0}> {1}",
                 player.getDisplayName(),
                 message
         );
