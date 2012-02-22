@@ -48,18 +48,21 @@ public class ChannelLink {
     }
 
 
-
-    public void relayExceptPlayer(Player player, String message){
+    public void relayMessageExceptPlayer(Player exception, String message){
         for(Channel channel : this.members.values()){
-            if(channel.getOwner().equals(player)){
+            if(channel.getOwner().equals(exception)){
                 continue;
             }
             channel.display(message);
         }
     }
-    public void relayMessage(Player player, String message){
+    public void relayMessage(Player sender, String message){
         for(Channel channel : this.members.values()){
-            channel.display(player, message);
+            if(channel.getOwner().equals(sender)){
+                channel.displayOutbound(sender,message);
+                continue;
+            }
+            channel.displayInbound(sender, message);
         }
     }
     public void relayMessage(String message){

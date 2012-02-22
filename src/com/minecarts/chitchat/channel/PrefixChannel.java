@@ -15,7 +15,7 @@ public class PrefixChannel extends Channel{
     private Player player;
     private String prefix;
     private ChatColor channelColor = null;
-    private final ChatColor[] colors = {ChatColor.GOLD, ChatColor.RED, ChatColor.GREEN, ChatColor.LIGHT_PURPLE, ChatColor.DARK_GREEN, ChatColor.DARK_RED};
+    private final ChatColor[] colors = {ChatColor.GREEN, ChatColor.LIGHT_PURPLE, ChatColor.DARK_GREEN, ChatColor.DARK_RED, ChatColor.AQUA, ChatColor.DARK_AQUA, ChatColor.RED, ChatColor.GOLD};
 
     public PrefixChannel(Player player, String name, String prefix){
         super(player,name);
@@ -26,7 +26,7 @@ public class PrefixChannel extends Channel{
     public PrefixChannel(Player player, String name){
         super(player,name);
         final ArrayList<String> usedPrefixes = ChannelManager.getUsedPrefix(player);
-        for(Integer i = 0; i < 50; i++){ //TODO: Make this a config value
+        for(Integer i = 1; i < 50; i++){ //TODO: Make this a config value
             if(!usedPrefixes.contains(i.toString())){
                 this.prefix = i.toString();
                 break;
@@ -44,6 +44,8 @@ public class PrefixChannel extends Channel{
 
         ChannelManager.markPrefixUsed(this.player,this.prefix);
 
+        //TODO: Permanent and announcment channels should not announce joins...
+
         this.display("You joined the channel (" + getName() + ").");
         this.broadcastExceptPlayer(this.player,this.player.getDisplayName() + " joined the channel.");
     }
@@ -53,6 +55,7 @@ public class PrefixChannel extends Channel{
             this.display("You are not in that channel (" + getName() + ").");
             return;
         }
+        super.leave();
 
         ChannelManager.markPrefixAvailable(this.player, this.prefix);
 
@@ -61,6 +64,7 @@ public class PrefixChannel extends Channel{
     }
 
 
+    @Override
     protected String formatMessage(String message){
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
         return MessageFormat.format("{0}/{2}{1} {3}",
@@ -70,6 +74,7 @@ public class PrefixChannel extends Channel{
                 message //3
         );
     }
+    @Override
     protected String formatMessage(Player player, String message){
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
         return MessageFormat.format("{0}/{2}{1} <{3}{1}> {4}",

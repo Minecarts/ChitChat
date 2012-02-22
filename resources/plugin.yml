@@ -7,6 +7,7 @@ depend: [DBQuery]
 description: An improved chat plugin
 commands:
     channel:
+        aliases: [ch]
         description: The main command to access all BarrensChat internal commands
         usage: /<command>
     whisper:
@@ -48,3 +49,6 @@ permissions:
     chitchat.who.detail:
         description: "Show detailed who info"
         default: op
+    chitchat.local.range:
+        description: "Show the range in local chat channels"
+        default: false

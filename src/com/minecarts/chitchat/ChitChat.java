@@ -1,9 +1,6 @@
 package com.minecarts.chitchat;
 
-import com.minecarts.chitchat.channel.Channel;
-import com.minecarts.chitchat.channel.LocalChannel;
-import com.minecarts.chitchat.channel.PrefixChannel;
-import com.minecarts.chitchat.channel.PermanentChannel;
+import com.minecarts.chitchat.channel.*;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.command.*;
 import com.minecarts.dbquery.DBQuery;
@@ -34,6 +31,9 @@ public class ChitChat extends JavaPlugin implements Listener {
             getCommand("leave").setExecutor(new LeaveCommand());
             getCommand("say").setExecutor(new SayCommand());
             getCommand("whisper").setExecutor(new WhisperCommand());
+            getCommand("channel").setExecutor(new ChannelCommand());
+            getCommand("rewhisper").setExecutor(new RewhisperCommand());
+            getCommand("reply").setExecutor(new ReplyCommand());
             //getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels
@@ -52,15 +52,24 @@ public class ChitChat extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         String[] args = event.getMessage().replaceAll(" +", " ").split(" ", 2);
         String prefix = args[0].replaceAll("/", "");
-        String message = args[1];
 
         PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, prefix);
         if(channel == null){
             return; //Don't handle it, it's probably not a channel index
         }
-        //channel.getBaseChannel().sendMessage(player,message);
         channel.setDefault();
-        Bukkit.getPluginManager().callEvent(new PlayerChatEvent(player,message)); //Send it via a player chat event
+        if(args.length == 1){
+            player.sendMessage(MessageFormat.format("{2}/{0} {3}[{1}] is now your default chat channel.",
+                    channel.getPrefix(),
+                    channel.getName(),
+                    ChatColor.GRAY,
+                    ChatColor.DARK_GRAY
+                    ));
+        }
+        if(args.length == 2){
+            String message = args[1];
+            channel.broadcast(player,message);
+        }
         event.setCancelled(true); //Cancel the event becuase we handled it
     }
 
@@ -97,7 +106,7 @@ public class ChitChat extends JavaPlugin implements Listener {
 
 
     private void joinPlayerToDynamicChannels(final Player player){
-        new Query("SELECT * FROM `player_channels` WHERE `playerName` = ?") {
+        new Query("SELECT * FROM `player_channels` WHERE `playerName` = ? ORDER BY `channelIndex`") {
             @Override
             public void onFetch(ArrayList<HashMap> rows) {
                 if(rows == null || rows.size() == 0) return;
@@ -110,7 +119,7 @@ public class ChitChat extends JavaPlugin implements Listener {
     }
     private void joinPlayerToStaticChannels(Player player){
         PrefixChannel global = new PermanentChannel(player, "Global", "g", ChatColor.GOLD);
-        PrefixChannel announce = new PermanentChannel(player, "Announce", "!", ChatColor.RED);
+        PrefixChannel announce = new AnnouncementChannel(player);
         LocalChannel local = new LocalChannel(player);
 
         if(player.hasPermission("subscriber")){

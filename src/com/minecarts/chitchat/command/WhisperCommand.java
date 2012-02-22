@@ -1,6 +1,7 @@
 package com.minecarts.chitchat.command;
 
 import com.minecarts.chitchat.channel.WhisperChannel;
+import com.minecarts.chitchat.manager.WhisperManager;
 import helper.StringHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,15 +24,21 @@ public class WhisperCommand implements CommandExecutor {
             senderName = ((Player) sender).getDisplayName();
         }
 
+        //source.sendMessage();
+        //destination.sendMessage();
+
         int numMatches = playermatches.size();
         if(numMatches > 1){
             sender.sendMessage("There were " + numMatches + " players matching \""+args[0]+"\". Please be more specific.");
         } else if (numMatches == 1) {
             Player receiver = playermatches.get(0);
-            WhisperChannel channel = new WhisperChannel((Player)sender,receiver);
-            channel.sendMessage((Player)sender,message);
-            //channel.sendMessage((Player)sender,);
-
+            if(sender.getName().equalsIgnoreCase(receiver.getName())){
+                sender.sendMessage("You can not whisper yourself.");
+                return true;
+            }
+            WhisperChannel senderChannel = new WhisperChannel((Player)sender,"Whisper-"+sender.getName() + "-"+receiver.getName());
+            WhisperChannel receiverChannel = new WhisperChannel(receiver,"Whisper-"+sender.getName() + "-"+receiver.getName());
+            senderChannel.broadcast((Player) sender, message); //Broadcast to the sender channel, so that the sender message displays special
         } else {
             sender.sendMessage("Could not find anyone online by that name.");
         }

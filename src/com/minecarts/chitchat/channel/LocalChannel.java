@@ -31,14 +31,27 @@ public class LocalChannel extends Channel{
         Double range = player.getLocation().distance(getOwner().getLocation());
         if(range > 100) return null; //Null messages wont be displayed
 
+        ChatColor prefixColor = ChatColor.DARK_GRAY;
+        if(isDefault()){
+            prefixColor = ChatColor.GRAY;
+        }
+        
         //TODO, make these ranges a config value
         ChatColor color = ChatColor.WHITE;
         if(range > 75) color = ChatColor.DARK_GRAY;
         else if(range > 50) color = ChatColor.GRAY;
 
-        return MessageFormat.format(color.toString() + Math.round(range) + ": <{0}> {1}",
-                player.getDisplayName(),
-                message
+        String rangeText = "";
+        if(getOwner().hasPermission("chitchat.local.range")){
+            rangeText = "." + Math.round(range) + "";
+        }
+
+        return MessageFormat.format("{3}/s{2}{4}<{0}> {1}",
+                player.getDisplayName(), //0
+                message, //1
+                rangeText, //2
+                prefixColor, //3
+                color //4
         );
     }
 }

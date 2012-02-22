@@ -1,46 +1,62 @@
 package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
+import com.minecarts.chitchat.manager.WhisperManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
 
 public class WhisperChannel extends Channel {
-    private Player source;
-    private Player destination;
-
-    public WhisperChannel(Player source, Player destination){
-        super(source, "Whisper-"+source.getName()+"-"+destination.getName());
-        this.source = source;
-        this.destination = destination;
-
+    public WhisperChannel(Player owner, String name){
+        super(owner, name);
+        super.join();
     }
 
     @Override
-    public void join(){
-        getLink().joinPlayer(source,this);
-        getLink().joinPlayer(destination,this);
-        ChannelManager.addPlayerChannel(source, this);
-        ChannelManager.addPlayerChannel(destination, this);
+    public void displayInbound(Player player, String message){
+        String formattedMessage = formatInbound(player, message);
+        if(formattedMessage != null){
+            getOwner().sendMessage(formattedMessage);
+            WhisperManager.setLastReceivedWhisper(getOwner(),this);
+        }
+    }
+    @Override
+     public void displayOutbound(Player player, String message){
+        String formattedMessage = formatOutbound(player, message);
+        if(formattedMessage != null){
+            getOwner().sendMessage(formattedMessage);
+            WhisperManager.setLastSentWhisper(getOwner(),this);
+        }
     }
 
-    public void sendMessage(Player player, String message){
-        source.sendMessage(MessageFormat.format("{0}> [{1}{0}] {2}", ChatColor.DARK_AQUA, destination.getDisplayName(), message));
-        destination.sendMessage(MessageFormat.format("{0}[{1}{0}] {2}", ChatColor.AQUA,source.getDisplayName(),message));
-    }
 
-    protected String formatMessage(String message){
+    //TODO: These functions are not used as the message is pre-formatted in the broadcast
+    //TODO:    ideally we should revisit this in the future and see if this is the best way to do this.
+    @Override
+    public String formatMessage(Player p, String message){ return message; }
+    @Override
+    public String formatMessage(String message){ return message; }
+
+    protected String formatInbound(Player player, String message){
+        //Inbound messages
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
-        return MessageFormat.format("LocalEvent: {0}",
+        return MessageFormat.format("{1}/r {0}[{2}] {3}",
+                ChatColor.AQUA,
+                color,
+                player.getDisplayName(),
                 message
         );
     }
-    protected String formatMessage(Player player, String message){
+
+    protected String formatOutbound(Player player, String message){
+        //Outbound messages
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
-        return MessageFormat.format("Local: <{0}> {1}",
+        return MessageFormat.format("{3}/rw {0}[{1}{0}] {2}",
+                ChatColor.DARK_AQUA,
                 player.getDisplayName(),
-                message
+                message,
+                color
         );
     }
 }
