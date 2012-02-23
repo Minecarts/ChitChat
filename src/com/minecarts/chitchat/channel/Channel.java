@@ -1,6 +1,7 @@
 package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
+import com.minecarts.chitchat.manager.IgnoreManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -78,6 +79,7 @@ abstract public class Channel {
 
 
     public void displayInbound(Player player, String message){
+        if(IgnoreManager.isIgnoring(getOwner(),player.getName())) return; //Ignore inbound messages from players
         String formattedMessage = formatMessage(player, message);
         if(formattedMessage != null){
             getOwner().sendMessage(formattedMessage);

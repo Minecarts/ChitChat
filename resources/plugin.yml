@@ -33,7 +33,7 @@ commands:
         description: Resends a whisper to the last person you whispered
         usage: /<command> [msg]
     ignore:
-        aliases: [unignore, block, unblock]
+        aliases: [unignore]
         description: Toggle if you see a players messages or not
         usage: /<command> [player]
 permissions:
@@ -52,3 +52,9 @@ permissions:
     chitchat.local.range:
         description: "Show the range in local chat channels"
         default: false
+    chitchat.ignore.immunity:
+        description: "Grants immunity from being able to be /ignored"
+        default: op
+    chitchat.announcement.chat:
+        description: "Allows chatting in the announcement channel"
+        default: op

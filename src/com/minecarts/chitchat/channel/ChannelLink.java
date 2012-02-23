@@ -57,6 +57,7 @@ public class ChannelLink {
         }
     }
     public void relayMessage(Player sender, String message){
+        System.out.println("ChitChat> [" + this.getName() + "] <"+sender.getName()+"> " + message);
         for(Channel channel : this.members.values()){
             if(channel.getOwner().equals(sender)){
                 channel.displayOutbound(sender,message);
@@ -66,6 +67,7 @@ public class ChannelLink {
         }
     }
     public void relayMessage(String message){
+        System.out.println("ChitChat> [" + this.getName() + "] " + message);
         for(Channel channel : this.members.values()){
             channel.display(message);
         }

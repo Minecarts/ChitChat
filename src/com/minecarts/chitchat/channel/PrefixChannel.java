@@ -1,7 +1,9 @@
 package com.minecarts.chitchat.channel;
 
+import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.LanguageManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -37,7 +39,7 @@ public class PrefixChannel extends Channel{
 
     public void join(){
         if(getLink().isPlayerInChannel(this.player)){
-            this.player.sendMessage(formatMessage("You are already in this channel (" + getName() + ")."));
+            getLink().getPlayerChannel(this.player).display("You are already in this channel (" + getName() + ").");
             return;
         }
         super.join();
@@ -47,7 +49,7 @@ public class PrefixChannel extends Channel{
         //TODO: Permanent and announcment channels should not announce joins...
 
         this.display("You joined the channel (" + getName() + ").");
-        this.broadcastExceptPlayer(this.player,this.player.getDisplayName() + " joined the channel.");
+        this.broadcastExceptPlayer(this.player, this.player.getDisplayName() + " joined the channel.");
     }
     
     public void leave(){
@@ -60,7 +62,7 @@ public class PrefixChannel extends Channel{
         ChannelManager.markPrefixAvailable(this.player, this.prefix);
 
         this.display("You left the channel (" + getName() + ").");
-        this.broadcastExceptPlayer(this.player,this.player.getDisplayName() + " left the channel.");
+        this.broadcastExceptPlayer(this.player, this.player.getDisplayName() + " left the channel.");
     }
 
 

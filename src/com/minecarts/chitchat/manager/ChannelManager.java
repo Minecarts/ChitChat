@@ -35,7 +35,9 @@ public class ChannelManager {
 
 //Channels
     public static PrefixChannel getChannelFromPrefix(Player player, String prefix){
-        for(Channel channel : playerChannelList.get(player)){
+        ArrayList<Channel> channels = playerChannelList.get(player);
+        if(channels == null) return null;
+        for(Channel channel : channels){
             if(!(channel instanceof PrefixChannel)) continue;
             if(prefix.equals(((PrefixChannel)channel).getPrefix())){
                 return (PrefixChannel)channel;

@@ -46,7 +46,7 @@ public class LocalChannel extends Channel{
             rangeText = "." + Math.round(range) + "";
         }
 
-        return MessageFormat.format("{3}/s{2}{4}<{0}> {1}",
+        return MessageFormat.format("{3}/s{2}{4} <{0}> {1}",
                 player.getDisplayName(), //0
                 message, //1
                 rangeText, //2

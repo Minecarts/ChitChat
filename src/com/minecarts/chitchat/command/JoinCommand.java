@@ -1,5 +1,6 @@
 package com.minecarts.chitchat.command;
 
+import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class JoinCommand implements CommandExecutor {
                     PrefixChannel channel = new PrefixChannel(player,args[0]);
                     channel.setDefault();
                     channel.join();
-
+                    ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(player, channel);
                     return true;
                 case 2: //Force join a player
                     //TODO: Add permissions check
@@ -41,6 +42,7 @@ public class JoinCommand implements CommandExecutor {
                     Player targetPlayer = players.get(0);
                     PrefixChannel forceChannel = new PrefixChannel(targetPlayer,args[1]);
                     forceChannel.setDefault();
+                    ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(targetPlayer, forceChannel);
 
                     sender.sendMessage("Force joined " + targetPlayer.getDisplayName() + " to " + args[1]);
                     return true;

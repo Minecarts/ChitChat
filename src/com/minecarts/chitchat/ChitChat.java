@@ -3,7 +3,10 @@ package com.minecarts.chitchat;
 import com.minecarts.chitchat.channel.*;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.command.*;
+import com.minecarts.chitchat.event.*;
+import com.minecarts.chitchat.manager.IgnoreManager;
 import com.minecarts.dbquery.DBQuery;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -34,16 +37,18 @@ public class ChitChat extends JavaPlugin implements Listener {
             getCommand("channel").setExecutor(new ChannelCommand());
             getCommand("rewhisper").setExecutor(new RewhisperCommand());
             getCommand("reply").setExecutor(new ReplyCommand());
+            getCommand("ignore").setExecutor(new IgnoreCommand());
             //getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels
         for(Player player : Bukkit.getOnlinePlayers()){
-            joinPlayerToStaticChannels(player);
-            joinPlayerToDynamicChannels(player);
+            this.joinPlayerToStaticChannels(player);
+            this.joinPlayerToDynamicChannels(player);
+            this.dbLoadIgnores(player);
         }
 
     }
-
+    
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event){
         //This will occur on all commands, we want to check to see if
@@ -75,7 +80,11 @@ public class ChitChat extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerChat(PlayerChatEvent e){
+        //WorldEdit CUI needs to see some data that's passed via chat and handled by the plugin??
+        if(StringUtils.left(e.getMessage(),5).equalsIgnoreCase("u00a7")) return;
+
         Channel channel = ChannelManager.getDefaultPlayerChannel(e.getPlayer());
+        if(channel == null) return;
         channel.broadcast(e.getPlayer(), e.getMessage());
         e.setCancelled(true);
     }
@@ -85,8 +94,9 @@ public class ChitChat extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player player = e.getPlayer();
         //Query the channels for this player and join them to them, in addition to global and announce
-        joinPlayerToStaticChannels(player);
-        joinPlayerToDynamicChannels(player);
+        this.joinPlayerToStaticChannels(player);
+        this.joinPlayerToDynamicChannels(player);
+        this.dbLoadIgnores(player);
     }
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e){
@@ -101,6 +111,15 @@ public class ChitChat extends JavaPlugin implements Listener {
         for(Channel channel : channels){
             channel.leave();
         }
+    }
+    
+    @EventHandler
+    public void onExternalAnnouncement(AnnouncementChannelEvent event){
+        //Ignore checks are handled by the channel itself, since it's treated as a player
+        //  sending a message, ideally this would be reworked someday to support
+        //  multiple senders BUT... since this is a stopgap plugin, not too concerned
+        ChannelLink link = ChannelManager.getOrCreateChannelLink("Announcement");
+        link.relayMessage(event.getPrimaryPlayer(),event.getMessage());
     }
 
 
@@ -130,6 +149,70 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
     }
 
+    //Channels
+    public void dbUpdateChannel(final Player player, final PrefixChannel channel){
+        new Query("INSERT INTO `player_channels` VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE channelId=?,channelName=?,channelIndex=?,isDefault=?") {
+            @Override
+            public void onAffected(Integer affected) {
+                System.out.println("Updated " + channel.getName() +" channel for " + player.getName());
+            }
+        }.affected(player.getName(),
+                channel.getPrefix(),
+                channel.getName().toLowerCase(),
+                channel.getName(),
+                channel.isDefault(),
+                channel.getName().toLowerCase(),
+                channel.getName(),
+                channel.getPrefix(),
+                channel.isDefault()
+        );
+    }
+    public void dbSetDefaultChannel(final Player player, final Channel channel){
+        new Query("UPDATE `player_channels` SET isDefault=0 WHERE `playerName` = ?") {
+            @Override
+            public void onAffected(Integer affected) {
+                System.out.println("Reset isDefualt for " + affected + " channels.");
+            }
+        }.affected(player.getName());
+    }
+    
+    public void dbRemoveChannel(final Player player, final PrefixChannel channel){
+        new Query("DELETE FROM `player_channels` WHERE `playerName` = ? AND `channelIndex` = ? AND `channelId` = ? LIMIT 1") {
+            @Override
+            public void onAffected(Integer affected) {
+                if(affected == 0){
+                    player.sendMessage("Channel " + channel.getName() + " with prefix " + channel.getPrefix() + " not in DB.");
+                }
+            }
+        }.affected(player.getName(),
+                channel.getPrefix(),
+                channel.getName().toLowerCase());
+    }
+
+    //Ignores
+    public void dbLoadIgnores(final Player player){
+        new Query("SELECT * FROM `player_ignore` WHERE `playerName` = ?") {
+            @Override
+            public void onFetch(ArrayList<HashMap> rows) {
+                if(rows == null || rows.size() == 0) return;
+                for(HashMap row : rows){
+                    IgnoreManager.ignorePlayer(player,(String)row.get("ignoreName"));
+                }
+            }
+        }.fetch(player.getName());
+    }
+    public void dbRemoveIgnore(final Player player, final String ignoree){
+        new Query("DELETE FROM `player_ignore` WHERE `playerName` = ? AND `ignoreName` = ? LIMIT 1") {}
+            .affected(player.getName(),
+                    ignoree);
+    }
+    public void dbAddIgnore(final Player player, String ignoree){
+        new Query("INSERT INTO `player_ignore` VALUES (?,?)") {}
+        .affected(player.getName(),
+                ignoree
+        );
+    }
+    
 
 
     //DB
