@@ -2,7 +2,7 @@ package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
-import org.bukkit.ChatColor;
+import com.minecarts.chitchat.manager.SpamManager;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
@@ -59,9 +59,12 @@ public class ChannelLink {
         }
     }
     public void relayMessage(Player[] taggedPlayers, String format, String... args){
+        if(taggedPlayers != null && taggedPlayers.length > 0){
+            SpamManager.checkSpam(taggedPlayers[0]);
+        }
         for(Channel channel : this.members.values()){
             List<Player> taggedList = Arrays.asList(taggedPlayers);
-            
+
             //Check ignores
             boolean hasIgnore = false;
             for(Player p : taggedPlayers){

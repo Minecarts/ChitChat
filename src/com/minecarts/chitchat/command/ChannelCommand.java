@@ -35,7 +35,7 @@ public class ChannelCommand implements CommandExecutor {
                         sender.sendMessage("No channel found with the prefix " + args[1]);
                         return true;
                     }
-                    sender.sendMessage(channel.getColor() + "---- Players in " +channel.getName() +" (" + channel.getPrefix() + ") -----");
+                    sender.sendMessage(channel.color() + "---- Players in " +channel.getName() +" (" + channel.getPrefix() + ") -----");
                     sender.sendMessage(StringUtils.join(channel.getMemberNames(),","));
                     return true;
                 } else {
@@ -52,7 +52,7 @@ public class ChannelCommand implements CommandExecutor {
                     sender.sendMessage(MessageFormat.format("{0}/{1}{2} {3} ({4} players)",
                             ChatColor.DARK_GRAY,
                             prefixChannel.getPrefix(),
-                            prefixChannel.getColor(),
+                            prefixChannel.color(),
                             prefixChannel.getName(),
                             prefixChannel.getMembers().size()
                     ));
