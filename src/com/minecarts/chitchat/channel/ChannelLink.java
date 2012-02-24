@@ -1,10 +1,12 @@
 package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
+import com.minecarts.chitchat.manager.IgnoreManager;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.text.MessageFormat;
+import java.util.*;
 
 public class ChannelLink {
     private HashMap<Player, Channel> members = new HashMap<Player, Channel>();
@@ -56,20 +58,43 @@ public class ChannelLink {
             channel.display(message);
         }
     }
-    public void relayMessage(Player sender, String message){
-        System.out.println("ChitChat> [" + this.getName() + "] <"+sender.getName()+"> " + message);
+    public void relayMessage(Player[] taggedPlayers, String format, String... args){
         for(Channel channel : this.members.values()){
-            if(channel.getOwner().equals(sender)){
-                channel.displayOutbound(sender,message);
+            List<Player> taggedList = Arrays.asList(taggedPlayers);
+            
+            //Check ignores
+            boolean hasIgnore = false;
+            for(Player p : taggedPlayers){
+                if(IgnoreManager.isIgnoring(channel.getOwner(), p.getName())){
+                    hasIgnore = true;
+                    break;
+                };
+            }
+            if(hasIgnore) continue; //Skip this message if the player is ignoring them
+
+            List<String> varargs = new ArrayList<String>();
+            varargs.add(channel.color().toString());
+            if(args != null){
+                varargs.addAll(Arrays.asList(args));
+            }
+            String message = MessageFormat.format(format, varargs.toArray());
+
+
+            if(taggedList.size() == 0){
+                channel.display(message);
                 continue;
             }
-            channel.displayInbound(sender, message);
+            if(taggedList.contains(channel.getOwner())){
+                channel.displayOutbound(taggedList.get(0),message); //The primary player is index 0
+                continue;
+            }
+            channel.displayInbound(taggedList.get(0), message);
         }
     }
+    public void relayMessage(Player[] taggedPlayers, String message){
+        relayMessage(taggedPlayers,message,null);
+    }
     public void relayMessage(String message){
-        System.out.println("ChitChat> [" + this.getName() + "] " + message);
-        for(Channel channel : this.members.values()){
-            channel.display(message);
-        }
+        relayMessage(null,message,null);
     }
 }

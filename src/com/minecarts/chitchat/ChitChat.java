@@ -1,15 +1,17 @@
 package com.minecarts.chitchat;
 
 import com.minecarts.chitchat.channel.*;
+import com.minecarts.chitchat.event.ChannelMessage;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.command.*;
-import com.minecarts.chitchat.event.*;
+import com.minecarts.chitchat.manager.GagManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
 import com.minecarts.dbquery.DBQuery;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -38,6 +40,8 @@ public class ChitChat extends JavaPlugin implements Listener {
             getCommand("rewhisper").setExecutor(new RewhisperCommand());
             getCommand("reply").setExecutor(new ReplyCommand());
             getCommand("ignore").setExecutor(new IgnoreCommand());
+            getCommand("mute").setExecutor(new MuteCommand(this));
+            getCommand("unmute").setExecutor(new UnmuteCommand());
             //getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels
@@ -48,8 +52,8 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
 
     }
-    
-    @EventHandler(priority = EventPriority.LOW)
+
+    @EventHandler(priority = EventPriority.LOW) //Listen on low for /! worldedit cmd workaround :(
     public void onPlayerCommand(PlayerCommandPreprocessEvent event){
         //This will occur on all commands, we want to check to see if
         //    it's a chat message to a specific channel, if so
@@ -73,7 +77,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
         if(args.length == 2){
             String message = args[1];
-            channel.broadcast(player,message);
+            channel.broadcast(new Player[]{player},message);
         }
         event.setCancelled(true); //Cancel the event becuase we handled it
     }
@@ -85,7 +89,7 @@ public class ChitChat extends JavaPlugin implements Listener {
 
         Channel channel = ChannelManager.getDefaultPlayerChannel(e.getPlayer());
         if(channel == null) return;
-        channel.broadcast(e.getPlayer(), e.getMessage());
+        channel.broadcast(new Player[]{e.getPlayer()}, e.getMessage());
         e.setCancelled(true);
     }
     
@@ -113,13 +117,10 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
     }
     
-    @EventHandler
-    public void onExternalAnnouncement(AnnouncementChannelEvent event){
-        //Ignore checks are handled by the channel itself, since it's treated as a player
-        //  sending a message, ideally this would be reworked someday to support
-        //  multiple senders BUT... since this is a stopgap plugin, not too concerned
-        ChannelLink link = ChannelManager.getOrCreateChannelLink("Announcement");
-        link.relayMessage(event.getPrimaryPlayer(),event.getMessage());
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onChannelMessage(ChannelMessage event){
+        ChannelLink link = ChannelManager.getOrCreateChannelLink(event.getChannelName());
+        link.relayMessage(event.getTaggedPlayers(),event.getFormat(),event.getArgs());
     }
 
 
@@ -140,6 +141,11 @@ public class ChitChat extends JavaPlugin implements Listener {
         PrefixChannel global = new PermanentChannel(player, "Global", "g", ChatColor.GOLD);
         PrefixChannel announce = new AnnouncementChannel(player);
         LocalChannel local = new LocalChannel(player);
+
+        if(GagManager.isGagged(player)){
+            global.canChat(false);
+            announce.canChat(false);
+        }
 
         if(player.hasPermission("subscriber")){
             PrefixChannel subscriber = new PermanentChannel(player, "Subscriber", "$", ChatColor.GREEN);

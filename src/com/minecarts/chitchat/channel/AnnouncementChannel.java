@@ -8,7 +8,7 @@ import java.text.MessageFormat;
 public class AnnouncementChannel extends PrefixChannel {
     public AnnouncementChannel(Player player){
         super(player,"Announcement","!");
-        this.setColor(ChatColor.RED);
+        this.color(ChatColor.RED);
         super.join();
     }
 
@@ -17,16 +17,16 @@ public class AnnouncementChannel extends PrefixChannel {
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
         return MessageFormat.format("{0}/{2}{1} {3}",
                 color, //0
-                this.getColor(), //1
+                this.color(), //1
                 this.getPrefix(), //2
                 message //3
         );
     }
     
     @Override
-    public void broadcast(Player player, String message){
-        if(player.hasPermission("chitchat.announcement.chat")){
-            super.broadcast(player,message);
+    public void broadcast(Player[] taggedPlayers, String message){
+        if(taggedPlayers[0].hasPermission("chitchat.announcement.chat")){
+            super.broadcast(taggedPlayers,message);
         } else {
             this.display("You are not allowed to chat in this channel.");
         }

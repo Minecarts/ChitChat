@@ -18,7 +18,7 @@ public class WhoCommand implements CommandExecutor {
                     if(sender instanceof Player){
                         Player commandPlayer = (Player)sender;
                         if(!commandPlayer.canSee(p)) continue;
-                        if(IgnoreManager.isIgnoring(commandPlayer,p)) continue;
+                        if(IgnoreManager.isIgnoring(commandPlayer,p.getName())) continue;
                     }
                     //TODO: Clean up this display (into a CSV, with worlds??)
                     sender.sendMessage(p.getDisplayName());

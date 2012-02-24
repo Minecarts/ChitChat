@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public class PermanentChannel extends PrefixChannel {
     public PermanentChannel(Player player, String name, String prefix, ChatColor color){
         super(player,name,prefix);
-        this.setColor(color);
+        this.color(color);
         super.join();
     }
 

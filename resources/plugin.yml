@@ -36,6 +36,14 @@ commands:
         aliases: [unignore]
         description: Toggle if you see a players messages or not
         usage: /<command> [player]
+    mute:
+        aliases: [gag]
+        description: Remove the ability for a player to send messages to global channels
+        usage: /<command> [player] [durration]
+    unmute:
+        aliases: [ungag]
+        description: Ungag a player who has been previously gagged
+        usage: /<command> [player]
 permissions:
     chitchat.admin.chat:
         description: "Allows a player to chat in administrative channels"

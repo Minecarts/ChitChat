@@ -14,6 +14,7 @@ abstract public class Channel {
     private Player owningPlayer; //The player this channel belongs to
     private ChannelLink channelLink;
     private String name;
+    private ChatColor color = null;
 
     private boolean canChat = true;
 
@@ -30,6 +31,14 @@ abstract public class Channel {
         return this.owningPlayer;
     }
 
+    public ChatColor color(){
+        return this.color;
+    }
+    public void color(ChatColor color){
+        this.color = color;
+    }
+    
+    
     public Set<Player> getMembers(){
         return this.getLink().getMembers();
     }
@@ -60,26 +69,25 @@ abstract public class Channel {
 
     //Outbound
     public void broadcastExceptPlayer(Player exception, String message){
+        if(!this.canChat()) return;
         getLink().relayMessageExceptPlayer(exception,message);
     }
-    public void broadcast(Player player, String message){
-        if(!this.canChat()){
-            this.display("You've been muted and can not chat in this channel."); //TODO: message from config
-            return;
-        }
-        getLink().relayMessage(player,message);
+    public void broadcast(Player[] taggedPlayers, String format, String... args){
+        if(!this.canChat()) return;
+        getLink().relayMessage(taggedPlayers,format,args);
+    }
+    public void broadcast(Player[] taggedPlayers, String message){
+        if(!this.canChat()) return;
+        getLink().relayMessage(taggedPlayers,message);
     }
     public void broadcast(String message){
-        if(!this.canChat()){
-            this.display("You've been muted and can not chat in this channel."); //TODO: message from config
-            return;
-        }
+        if(!this.canChat()) return;
         getLink().relayMessage(message);
     }
 
 
+
     public void displayInbound(Player player, String message){
-        if(IgnoreManager.isIgnoring(getOwner(),player.getName())) return; //Ignore inbound messages from players
         String formattedMessage = formatMessage(player, message);
         if(formattedMessage != null){
             getOwner().sendMessage(formattedMessage);
@@ -110,6 +118,9 @@ abstract public class Channel {
     }
     
     public Boolean canChat(){
+        if(!this.canChat){
+            this.display("You've been muted and can not chat in this channel."); //TODO: message from config
+        }
         return this.canChat;
     }
     public void canChat(Boolean chatFlag){

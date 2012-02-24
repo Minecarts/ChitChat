@@ -16,7 +16,6 @@ public class PrefixChannel extends Channel{
 
     private Player player;
     private String prefix;
-    private ChatColor channelColor = null;
     private final ChatColor[] colors = {ChatColor.GREEN, ChatColor.LIGHT_PURPLE, ChatColor.DARK_GREEN, ChatColor.DARK_RED, ChatColor.AQUA, ChatColor.DARK_AQUA, ChatColor.RED, ChatColor.GOLD};
 
     public PrefixChannel(Player player, String name, String prefix){
@@ -68,31 +67,29 @@ public class PrefixChannel extends Channel{
 
     @Override
     protected String formatMessage(String message){
-        ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
+        ChatColor defaultColor = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
         return MessageFormat.format("{0}/{2}{1} {3}",
-                color, //0
-                this.getColor(), //1
+                defaultColor, //0
+                this.color(), //1
                 this.getPrefix(), //2
                 message //3
         );
     }
     @Override
     protected String formatMessage(Player player, String message){
-        ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
+        ChatColor defaultColor = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
         return MessageFormat.format("{0}/{2}{1} <{3}{1}> {4}",
-                color, //0
-                this.getColor(), //1
+                defaultColor, //0
+                this.color(), //1
                 this.getPrefix(), //2
                 player.getDisplayName(), //3
                 message //4
         );
     }
 
-    public void setColor(ChatColor color){
-        this.channelColor = color;
-    }
-    public ChatColor getColor(){
-        if(channelColor != null) return channelColor; //Return the channel color if it's specifically set
+    @Override
+    public ChatColor color(){
+        if(super.color() != null) return super.color(); //Return the channel color if it's specifically set
         try{
             Integer index = Integer.parseInt(this.prefix);
             return colors[index % colors.length];

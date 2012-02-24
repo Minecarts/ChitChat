@@ -19,7 +19,7 @@ public class SayCommand implements CommandExecutor {
                 if(channel instanceof LocalChannel){
                     LocalChannel lc = (LocalChannel) channel;
                     lc.setDefault();
-                    lc.broadcast(player,message);
+                    lc.broadcast(new Player[] {(Player) sender},message);
                     return true;
                 }
             }
