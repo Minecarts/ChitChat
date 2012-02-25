@@ -18,7 +18,9 @@ public class RewhisperCommand implements CommandExecutor {
             return true;
         }
         channel.setDefault();
-        channel.broadcast(new Player[] {(Player) sender}, message);
+        channel.broadcastExceptPlayer(channel.getOwner(),channel.formatMessage((Player)sender,message));
+        channel.displayOutbound(channel.target(), channel.formatMessage(channel.target(),message));
+        //channel.broadcast(new Player[] {(Player) sender, channel.target()}, message);
         return true;
     }
 }

@@ -4,6 +4,7 @@ import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,12 +15,19 @@ import java.util.List;
 
 public class JoinCommand implements CommandExecutor {
         public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+            ChitChat plugin = ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat"));
             switch(args.length){
                 case 1: //Join a channel
                     if(!(sender instanceof Player)) return true;
 
                     Player player = (Player)sender;
-                    //TODO: Add check for certain things, like numetic only channels, etc
+                    try{
+                        Integer.parseInt(args[0]);
+                        sender.sendMessage("Please join a channel with a name such as " + ChatColor.YELLOW + "/join MyName" + ChatColor.WHITE + ".");
+                        return true;
+                    } catch (NumberFormatException e){
+                        //It wasn't an int, so it's good to go
+                    }
 
                     //TODO: Find a better way to do this, and or make these configuration values
                     if(ChannelManager.isChannelNameJoinRestricted(args[0])){
@@ -28,9 +36,12 @@ public class JoinCommand implements CommandExecutor {
                     }
 
                     PrefixChannel channel = new PrefixChannel(player,args[0]);
-                    channel.setDefault();
-                    channel.join(false,false);
-                    ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(player, channel);
+                    if(channel.join(false,false)){
+                        plugin.dbUpdateChannel(player, channel);
+                        if(channel.setDefault()){
+                            plugin.dbSetDefaultChannel(player,channel);
+                        }
+                    }
                     return true;
                 case 2: //Force join a player
                     //TODO: Add permissions check
@@ -43,7 +54,8 @@ public class JoinCommand implements CommandExecutor {
                     PrefixChannel forceChannel = new PrefixChannel(targetPlayer,args[1]);
                     forceChannel.join(false,false);
                     forceChannel.setDefault();
-                    ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(targetPlayer, forceChannel);
+                    plugin.dbUpdateChannel(targetPlayer, forceChannel);
+                    plugin.dbSetDefaultChannel(targetPlayer,forceChannel);
 
                     sender.sendMessage("Force joined " + targetPlayer.getDisplayName() + " to " + args[1]);
                     return true;

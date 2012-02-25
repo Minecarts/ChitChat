@@ -8,9 +8,17 @@ import org.bukkit.entity.Player;
 import java.text.MessageFormat;
 
 public class WhisperChannel extends Channel {
+    private Player target;
     public WhisperChannel(Player owner, String name){
         super(owner, name);
         super.join();
+    }
+    
+    public void target(Player target){
+        this.target = target;
+    }
+    public Player target(){
+        return this.target;
     }
 
     @Override
@@ -23,7 +31,7 @@ public class WhisperChannel extends Channel {
     }
     @Override
      public void displayOutbound(Player player, String message){
-        String formattedMessage = formatOutbound(player, message);
+        String formattedMessage = formatOutbound(this.target(), message);
         if(formattedMessage != null){
             getOwner().sendMessage(formattedMessage);
             WhisperManager.setLastSentWhisper(getOwner(),this);

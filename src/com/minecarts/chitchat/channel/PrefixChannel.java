@@ -39,7 +39,12 @@ public class PrefixChannel extends Channel{
 
 
     public Boolean join(boolean suppressJoinSelf, boolean suppressJoinOther){
+        if(this.prefix == null){
+            getOwner().sendMessage("You are in too many channels and are unable to join " + this.getName() + ".");
+            return false;
+        }
         if(getLink().isPlayerInChannel(this.player)){
+            getLink().getPlayerChannel(this.player).setDefault();
             getLink().getPlayerChannel(this.player).display("You are already in this channel (" + getName() + ").");
             return false;
         }

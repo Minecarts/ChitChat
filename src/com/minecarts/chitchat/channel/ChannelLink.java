@@ -3,6 +3,7 @@ package com.minecarts.chitchat.channel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
 import com.minecarts.chitchat.manager.SpamManager;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
@@ -49,8 +50,16 @@ public class ChannelLink {
         return this.members.get(player);
     }
 
+    private void logMessage(Player player, String message){
+        if(player == null){
+            System.out.println("ChitChat> [" + this.getName() + "]:  "+ ChatColor.stripColor(message));
+        } else {
+            System.out.println("ChitChat> [" + this.getName() + "]: <"+player.getName()+"> " + ChatColor.stripColor(message));
+        }
+    }
 
     public void relayMessageExceptPlayer(Player exception, String message){
+        this.logMessage(null,message);
         for(Channel channel : this.members.values()){
             if(channel.getOwner().equals(exception)){
                 continue;
@@ -59,12 +68,23 @@ public class ChannelLink {
         }
     }
     public void relayMessage(Player[] taggedPlayers, String format, String... args){
+        List<Player> taggedList = Arrays.asList(taggedPlayers);
         if(taggedPlayers != null && taggedPlayers.length > 0){
-            SpamManager.checkSpam(taggedPlayers[0]);
+            SpamManager.checkSpam(taggedList.get(0));
         }
-        for(Channel channel : this.members.values()){
-            List<Player> taggedList = Arrays.asList(taggedPlayers);
 
+        //Handle formatting for console logging
+            if(args != null){
+                List<String> varargs = new ArrayList<String>();
+                varargs.add(ChatColor.WHITE.toString());
+                varargs.addAll(Arrays.asList(args));
+                this.logMessage(taggedList.get(0),MessageFormat.format(format, varargs.toArray()));
+            } else {
+                this.logMessage(taggedList.get(0),format);
+            }
+
+
+        for(Channel channel : this.members.values()){
             //Check ignores
             boolean hasIgnore = false;
             for(Player p : taggedPlayers){

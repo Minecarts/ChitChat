@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class LanguageManager {
     public static String filter(ChatColor channelColor, String message){
-        return message;
+        return message.replaceAll("(fuck)",ChatColor.MAGIC + "$1" + channelColor);
     }
     public static String translate(String message){
         return message;

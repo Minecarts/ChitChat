@@ -1,6 +1,8 @@
 package com.minecarts.chitchat.manager;
 
 
+import com.minecarts.chitchat.ChitChat;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -26,7 +28,7 @@ public class SpamManager {
         while(itr.hasPrevious()) {
             Long checkTime = itr.previous();
             Long elapsedTime = messageTime - checkTime;
-            if(elapsedTime > (5 * 1000)){
+            if(elapsedTime > (4 * 1000)){ //TODO Config
                 if(itr.previousIndex() >= 0) {
                     //Why +2? Not sure, becuase previousIndex off by 1, and this is a count not a index? investigate this someday.
                     //  could be a bug in NormalizedDrops if this is the case
@@ -35,9 +37,10 @@ public class SpamManager {
                 break;
             }
         }
-        if(timestampHistory.size() > 5){
-          //SPAMMER!
-            player.sendMessage("Spamming!");
+        if(timestampHistory.size() > 5){ //TODO Config
+        //Spamming
+            ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbInsertBan(player);
+            player.kickPlayer("Your keyboard must be overheating...why don't you take a little break?"); //TODO: Config
         }
         messageTracker.put(player,timestampHistory);
     }

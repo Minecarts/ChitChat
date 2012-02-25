@@ -70,7 +70,9 @@ public class ChitChat extends JavaPlugin implements Listener {
         if(channel == null){
             return; //Don't handle it, it's probably not a channel index
         }
-        channel.setDefault();
+        if(channel.setDefault()){
+            ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(player, channel);
+        }
         if(args.length == 1){
             player.sendMessage(MessageFormat.format("{{0} {2}[{1}] is now your default chat channel.",
                     channel.getPrefix(),
@@ -107,17 +109,21 @@ public class ChitChat extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e){
-        for(Channel channel : ChannelManager.getPlayerChannels(e.getPlayer())){
-            channel.leave();
+        ArrayList<Channel> channels = ChannelManager.getPlayerChannels(e.getPlayer());
+        if(channels == null) return;
+        for(Channel channel : channels){
+            channel.leaveWithoutClear(); //Todo: This wont notify players on leave, is this intended?
         }
+        ChannelManager.clearPlayerChannels(e.getPlayer());
     }
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
         ArrayList<Channel> channels = ChannelManager.getPlayerChannels(e.getPlayer());
         if(channels == null) return;
         for(Channel channel : channels){
-            channel.leave();
+            channel.leaveWithoutClear();
         }
+        ChannelManager.clearPlayerChannels(e.getPlayer());
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -136,11 +142,16 @@ public class ChitChat extends JavaPlugin implements Listener {
                 for(HashMap row : rows){
                     PrefixChannel channel = new PrefixChannel(player,(String)row.get("channelName"),row.get("channelIndex").toString());
                     channel.join(true,isReload);
+                    if((Boolean)row.get("isDefault")){
+                        channel.setDefault();
+                    }
                 }
-                player.sendMessage(MessageFormat.format("You joined {0} channels. Type {1}/ch list{2} for a list.",
-                        ChannelManager.getPlayerChannels(player).size(),
-                        ChatColor.YELLOW,
-                        ChatColor.WHITE));
+                if(!isReload){
+                    player.sendMessage(MessageFormat.format("You joined {0} channels. Type {1}/ch list{2} for details.",
+                            ChannelManager.getVisibleChannelCount(player),
+                            ChatColor.YELLOW,
+                            ChatColor.WHITE));
+                }
             }
         }.fetch(player.getName());
     }
@@ -166,6 +177,21 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
     }
 
+    //Bans
+    public void dbInsertBan(final Player player){
+        new Query("INSERT INTO `player_bans` VALUES (?,?,?,NOW(),TIMESTAMPADD(MINUTE, ?, NOW()))") {
+            @Override
+            public void onAffected(Integer affected) {
+                System.out.println("ChitChat> Automatically banned " + player.getName() + " for spam.");
+            }
+        }.affected(
+                player.getName(),
+                "Your keyboard must be overheating...why don't you take a little break?", //TODO: Config
+                "plugin.ChitChat",
+                15
+        );
+    }
+
     //Channels
     public void dbUpdateChannel(final Player player, final PrefixChannel channel){
         new Query("INSERT INTO `player_channels` VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE channelId=?,channelName=?,channelIndex=?,isDefault=?") {
@@ -181,14 +207,21 @@ public class ChitChat extends JavaPlugin implements Listener {
                 channel.getName().toLowerCase(),
                 channel.getName(),
                 channel.getRawPrefix(),
-                channel.isDefault()
+                0
         );
     }
     public void dbSetDefaultChannel(final Player player, final Channel channel){
         new Query("UPDATE `player_channels` SET isDefault=0 WHERE `playerName` = ?") {
             @Override
             public void onAffected(Integer affected) {
-                System.out.println("Reset isDefualt for " + affected + " channels.");
+                System.out.println("Reset isDefualt for " + affected + " channels for player " + player.getName());
+
+                new Query("UPDATE `player_channels` SET isDefault=1 WHERE `playerName` = ? AND `channelId` = ? LIMIT 1") {
+                    @Override
+                    public void onAffected(Integer affected) {
+                        System.out.println("Set isDefualt to " + channel.getName() + " for " + player.getName());
+                    }
+                }.affected(channel.getName().toLowerCase());
             }
         }.affected(player.getName());
     }

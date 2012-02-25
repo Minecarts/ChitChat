@@ -16,10 +16,8 @@ public class AnnouncementChannel extends PrefixChannel {
     public String formatMessage(Player player, String message){
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
         return MessageFormat.format("{0} {1}",
-                color, //0
-                this.color(), //1
-                this.getPrefix(), //2
-                message //3
+                this.getPrefix(), //0
+                message //1
         );
     }
 
@@ -36,7 +34,7 @@ public class AnnouncementChannel extends PrefixChannel {
         this.display("You are not allowed to chat in this channel.");
     }
     @Override
-    public void setDefault(){
-        return;
+    public Boolean setDefault(){
+        return false;
     }
 }

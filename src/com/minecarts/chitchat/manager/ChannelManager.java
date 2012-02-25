@@ -1,8 +1,11 @@
 package com.minecarts.chitchat.manager;
 
+import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.Channel;
 import com.minecarts.chitchat.channel.ChannelLink;
+import com.minecarts.chitchat.channel.LocalChannel;
 import com.minecarts.chitchat.channel.PrefixChannel;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -62,6 +65,9 @@ public class ChannelManager {
         }
         playerChannelList.get(p).remove(ch);
     }
+    public static void clearPlayerChannels(Player p){
+        playerChannelList.put(p,new ArrayList<Channel>());
+    }
 
 
     public static ArrayList<Channel> getPlayerChannels(Player p){
@@ -95,5 +101,13 @@ public class ChannelManager {
     }
     public static ArrayList<String> getUsedPrefix(Player player){
         return playerPrefixUsage.get(player);
+    }
+    
+    public static Integer getVisibleChannelCount(Player player){
+        int i = 0;
+        for(Channel ch : getPlayerChannels(player)){
+            if(ch instanceof PrefixChannel) i++;
+        }
+        return i;
     }
 }

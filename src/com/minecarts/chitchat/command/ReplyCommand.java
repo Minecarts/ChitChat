@@ -17,7 +17,9 @@ public class ReplyCommand implements CommandExecutor {
             sender.sendMessage("You have received no whispers recently.");
             return true;
         }
-        channel.setDefault();
+        if(channel.setDefault()){
+            //Default set to whispers
+        }
         channel.broadcast(new Player[] {(Player) sender}, message);
         return true;
     }

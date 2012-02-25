@@ -2,6 +2,7 @@ package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
+import com.minecarts.chitchat.manager.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -59,13 +60,17 @@ abstract public class Channel {
     }
 
     public Boolean join(){
-        getLink().joinPlayer(this.owningPlayer,this);
-        ChannelManager.addPlayerChannel(this.owningPlayer,this);
+        getLink().joinPlayer(this.owningPlayer, this);
+        ChannelManager.addPlayerChannel(this.owningPlayer, this);
         return true;
     }
     public Boolean leave(){
         getLink().leavePlayer(this.owningPlayer);
         ChannelManager.removePlayerChannel(this.owningPlayer, this);
+        return true;
+    }
+    public Boolean leaveWithoutClear(){
+        getLink().leavePlayer(this.owningPlayer);
         return true;
     }
 
@@ -76,7 +81,7 @@ abstract public class Channel {
     }
     public void broadcast(Player[] taggedPlayers, String format, String... args){
         if(!this.canChat()) return;
-        getLink().relayMessage(taggedPlayers,format,args);
+        getLink().relayMessage(taggedPlayers, format, args);
     }
     public void broadcast(Player[] taggedPlayers, String message){
         if(!this.canChat()) return;
@@ -90,13 +95,13 @@ abstract public class Channel {
 
 
     public void displayInbound(Player player, String message){
-        String formattedMessage = formatMessage(player, message);
+        String formattedMessage = formatMessage(player, LanguageManager.filter(this.color(),message));
         if(formattedMessage != null){
             getOwner().sendMessage(formattedMessage);
         }
     }
     public void displayOutbound(Player player, String message){
-        String formattedMessage = formatMessage(player, message);
+        String formattedMessage = formatMessage(player, LanguageManager.filter(this.color(),message));
         if(formattedMessage != null){
             getOwner().sendMessage(formattedMessage);
         }
@@ -111,9 +116,10 @@ abstract public class Channel {
     abstract protected String formatMessage(String message);
     abstract protected String formatMessage(Player player, String message);
 
-    public void setDefault(){
-        if(!this.canChat()) return; //Never set default for a channel they can't chat in
+    public Boolean setDefault(){
+        if(!this.canChat()) return false; //Never set default for a channel they can't chat in
         ChannelManager.setDefaultPlayerChannel(this.owningPlayer,this);
+        return true;
     }
 
     public Boolean isDefault(){
