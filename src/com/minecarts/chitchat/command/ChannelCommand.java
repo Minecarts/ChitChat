@@ -49,12 +49,10 @@ public class ChannelCommand implements CommandExecutor {
             for(Channel channel : channels){
                 if(channel instanceof PrefixChannel){
                     PrefixChannel prefixChannel = (PrefixChannel) channel;
-                    sender.sendMessage(MessageFormat.format("{0}/{1}{2} {3} ({4} players)",
-                            ChatColor.DARK_GRAY,
-                            prefixChannel.getPrefix(),
-                            prefixChannel.color(),
-                            prefixChannel.getName(),
-                            prefixChannel.getMembers().size()
+                    sender.sendMessage(MessageFormat.format("{0} {1} ({2} players)",
+                            prefixChannel.getPrefix(), //0
+                            prefixChannel.getName(), //1
+                            prefixChannel.getMembers().size() //2
                     ));
                 }
             }

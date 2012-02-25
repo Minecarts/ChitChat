@@ -39,7 +39,7 @@ public class ChannelManager {
         if(channels == null) return null;
         for(Channel channel : channels){
             if(!(channel instanceof PrefixChannel)) continue;
-            if(prefix.equals(((PrefixChannel)channel).getPrefix())){
+            if(prefix.equals(((PrefixChannel)channel).getRawPrefix())){
                 return (PrefixChannel)channel;
             }
         }

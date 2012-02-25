@@ -26,8 +26,10 @@ public class LeaveCommand implements CommandExecutor {
         if(channel.isDefault()){ //Reset the default channel to global if they leave their default channel
             ChannelManager.getChannelFromPrefix((Player)sender,"g").setDefault();
         }
-        channel.leave();
-        ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbRemoveChannel((Player)sender, channel);
+        if(channel.leave(false,false)){
+            //Only remove the channel from the DB if they successfully left
+            ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbRemoveChannel((Player)sender, channel);
+        }
         return true;
     }
 }

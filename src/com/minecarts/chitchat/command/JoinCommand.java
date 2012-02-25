@@ -29,7 +29,7 @@ public class JoinCommand implements CommandExecutor {
 
                     PrefixChannel channel = new PrefixChannel(player,args[0]);
                     channel.setDefault();
-                    channel.join();
+                    channel.join(false,false);
                     ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(player, channel);
                     return true;
                 case 2: //Force join a player
@@ -41,6 +41,7 @@ public class JoinCommand implements CommandExecutor {
                     }
                     Player targetPlayer = players.get(0);
                     PrefixChannel forceChannel = new PrefixChannel(targetPlayer,args[1]);
+                    forceChannel.join(false,false);
                     forceChannel.setDefault();
                     ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(targetPlayer, forceChannel);
 

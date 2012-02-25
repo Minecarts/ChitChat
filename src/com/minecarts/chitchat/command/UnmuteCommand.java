@@ -15,7 +15,7 @@ import java.util.List;
 public class UnmuteCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         //TODO: Permissions check
-        if(args.length != 1 || args.length != 2) return false;
+        if(args.length != 1 && args.length != 2) return false;
 
         List<Player> matches = Bukkit.matchPlayer(args[0]);
         if(matches.size() > 1){

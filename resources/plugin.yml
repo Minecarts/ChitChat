@@ -44,10 +44,16 @@ commands:
         aliases: [ungag]
         description: Ungag a player who has been previously gagged
         usage: /<command> [player]
+    announce:
+        description: Announce to the announcement channel
+        usage: /<command> [msg]
 permissions:
     chitchat.admin.chat:
         description: "Allows a player to chat in administrative channels"
         default: op
+    chitchat.admin.mute:
+        description: "Allows muting of other players"
+        defualt: op
     chitchat.channel.chat:
         description: "Allow a player to chat in a channel"
         default: true

@@ -58,13 +58,15 @@ abstract public class Channel {
         this.channelLink = link;
     }
 
-    public void join(){
+    public Boolean join(){
         getLink().joinPlayer(this.owningPlayer,this);
         ChannelManager.addPlayerChannel(this.owningPlayer,this);
+        return true;
     }
-    public void leave(){
+    public Boolean leave(){
         getLink().leavePlayer(this.owningPlayer);
         ChannelManager.removePlayerChannel(this.owningPlayer, this);
+        return true;
     }
 
     //Outbound
@@ -110,6 +112,7 @@ abstract public class Channel {
     abstract protected String formatMessage(Player player, String message);
 
     public void setDefault(){
+        if(!this.canChat()) return; //Never set default for a channel they can't chat in
         ChannelManager.setDefaultPlayerChannel(this.owningPlayer,this);
     }
 

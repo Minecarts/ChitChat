@@ -76,7 +76,9 @@ public class ChannelLink {
             if(hasIgnore) continue; //Skip this message if the player is ignoring them
 
             List<String> varargs = new ArrayList<String>();
-            varargs.add(channel.color().toString());
+            if(channel.color() != null){
+                varargs.add(channel.color().toString());
+            }
             if(args != null){
                 varargs.addAll(Arrays.asList(args));
             }

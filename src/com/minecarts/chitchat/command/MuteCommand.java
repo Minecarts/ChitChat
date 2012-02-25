@@ -51,6 +51,16 @@ public class MuteCommand implements CommandExecutor {
         global.canChat(false);
         announcement.canChat(false);
         GagManager.gag(matchedPlayer); //Store the gag to auto gag on login
+
+        //TODO: These messages should be config values.
+        Integer minutes = (durationTicks / 20 / 60);
+        sender.sendMessage("You have muted " + matchedPlayer.getDisplayName() + " for " + minutes + " minutes");
+        for(Player p : Bukkit.getOnlinePlayers()){
+            if(!p.hasPermission("chitchat.admin.mute")) continue;
+            if(p.equals(sender)) continue;
+            p.sendMessage(sender.getName() + " muted " + matchedPlayer.getDisplayName() + " for " + minutes + " minutes.");
+        }
+        matchedPlayer.sendMessage("You have been muted.");
         
         Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin,new Runnable() {
             public void run() {

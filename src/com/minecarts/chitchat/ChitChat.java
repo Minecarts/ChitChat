@@ -46,8 +46,8 @@ public class ChitChat extends JavaPlugin implements Listener {
 
         //Join existing players to our default / static channels
         for(Player player : Bukkit.getOnlinePlayers()){
-            this.joinPlayerToStaticChannels(player);
-            this.joinPlayerToDynamicChannels(player);
+            this.joinPlayerToStaticChannels(player,true);
+            this.joinPlayerToDynamicChannels(player,true);
             this.dbLoadIgnores(player);
         }
 
@@ -62,21 +62,24 @@ public class ChitChat extends JavaPlugin implements Listener {
         String[] args = event.getMessage().replaceAll(" +", " ").split(" ", 2);
         String prefix = args[0].replaceAll("/", "");
 
+        //Handle any aliases we may have defined
+        //  TODO: Make a config
+        if(prefix.equalsIgnoreCase("announce")) prefix = "!";
+
         PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, prefix);
         if(channel == null){
             return; //Don't handle it, it's probably not a channel index
         }
         channel.setDefault();
         if(args.length == 1){
-            player.sendMessage(MessageFormat.format("{2}/{0} {3}[{1}] is now your default chat channel.",
+            player.sendMessage(MessageFormat.format("{{0} {2}[{1}] is now your default chat channel.",
                     channel.getPrefix(),
                     channel.getName(),
-                    ChatColor.GRAY,
                     ChatColor.DARK_GRAY
                     ));
         }
         if(args.length == 2){
-            String message = args[1];
+            String message = ChatColor.stripColor(args[1]);
             channel.broadcast(new Player[]{player},message);
         }
         event.setCancelled(true); //Cancel the event becuase we handled it
@@ -89,7 +92,7 @@ public class ChitChat extends JavaPlugin implements Listener {
 
         Channel channel = ChannelManager.getDefaultPlayerChannel(e.getPlayer());
         if(channel == null) return;
-        channel.broadcast(new Player[]{e.getPlayer()}, e.getMessage());
+        channel.broadcast(new Player[]{e.getPlayer()}, ChatColor.stripColor(e.getMessage()));
         e.setCancelled(true);
     }
     
@@ -98,8 +101,8 @@ public class ChitChat extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player player = e.getPlayer();
         //Query the channels for this player and join them to them, in addition to global and announce
-        this.joinPlayerToStaticChannels(player);
-        this.joinPlayerToDynamicChannels(player);
+        this.joinPlayerToStaticChannels(player,false);
+        this.joinPlayerToDynamicChannels(player,false);
         this.dbLoadIgnores(player);
     }
     @EventHandler
@@ -125,22 +128,28 @@ public class ChitChat extends JavaPlugin implements Listener {
 
 
 
-    private void joinPlayerToDynamicChannels(final Player player){
+    private void joinPlayerToDynamicChannels(final Player player, final boolean isReload){
         new Query("SELECT * FROM `player_channels` WHERE `playerName` = ? ORDER BY `channelIndex`") {
             @Override
             public void onFetch(ArrayList<HashMap> rows) {
                 if(rows == null || rows.size() == 0) return;
                 for(HashMap row : rows){
                     PrefixChannel channel = new PrefixChannel(player,(String)row.get("channelName"),row.get("channelIndex").toString());
-                    channel.join();
+                    channel.join(true,isReload);
                 }
+                player.sendMessage(MessageFormat.format("You joined {0} channels. Type {1}/ch list{2} for a list.",
+                        ChannelManager.getPlayerChannels(player).size(),
+                        ChatColor.YELLOW,
+                        ChatColor.WHITE));
             }
         }.fetch(player.getName());
     }
-    private void joinPlayerToStaticChannels(Player player){
+    private void joinPlayerToStaticChannels(Player player, boolean isReload){
         PrefixChannel global = new PermanentChannel(player, "Global", "g", ChatColor.GOLD);
+        global.join(true,true); //Never show joins for global
         PrefixChannel announce = new AnnouncementChannel(player);
-        LocalChannel local = new LocalChannel(player);
+        announce.join(true,true);
+        LocalChannel local = new LocalChannel(player); //Local auto joins on construction
 
         if(GagManager.isGagged(player)){
             global.canChat(false);
@@ -149,9 +158,11 @@ public class ChitChat extends JavaPlugin implements Listener {
 
         if(player.hasPermission("subscriber")){
             PrefixChannel subscriber = new PermanentChannel(player, "Subscriber", "$", ChatColor.GREEN);
+            subscriber.join(true,isReload);
         }
         if(player.hasPermission("chitchat.admin.chat")){
             PrefixChannel admin = new PermanentChannel(player, "Admin", "@", ChatColor.YELLOW);
+            admin.join(true,isReload);
         }
     }
 
@@ -163,13 +174,13 @@ public class ChitChat extends JavaPlugin implements Listener {
                 System.out.println("Updated " + channel.getName() +" channel for " + player.getName());
             }
         }.affected(player.getName(),
-                channel.getPrefix(),
+                channel.getRawPrefix(),
                 channel.getName().toLowerCase(),
                 channel.getName(),
                 channel.isDefault(),
                 channel.getName().toLowerCase(),
                 channel.getName(),
-                channel.getPrefix(),
+                channel.getRawPrefix(),
                 channel.isDefault()
         );
     }
@@ -191,7 +202,7 @@ public class ChitChat extends JavaPlugin implements Listener {
                 }
             }
         }.affected(player.getName(),
-                channel.getPrefix(),
+                channel.getRawPrefix(),
                 channel.getName().toLowerCase());
     }
 

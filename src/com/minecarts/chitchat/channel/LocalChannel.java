@@ -14,12 +14,14 @@ public class LocalChannel extends Channel{
 
     //Prevent anyone from joining or leaving this channel via command
     @Override
-    public void join(){
-        this.display("You cannot join this channel.");
+    public Boolean join(){
+        this.display("You cannot join the local channel.");
+        return false;
     }
     @Override
-    public void leave(){
-        this.display("You cannot leave this channel.");
+    public Boolean leave(){
+        this.display("You cannot leave the local channel.");
+        return false;
     }
 
     protected String formatMessage(String message){
@@ -29,7 +31,7 @@ public class LocalChannel extends Channel{
     }
     protected String formatMessage(Player player, String message){
         Double range = player.getLocation().distance(getOwner().getLocation());
-        if(range > 100) return null; //Null messages wont be displayed
+        if(range > 200) return null; //Null messages wont be displayed
 
         ChatColor prefixColor = ChatColor.DARK_GRAY;
         if(isDefault()){
@@ -38,8 +40,8 @@ public class LocalChannel extends Channel{
         
         //TODO, make these ranges a config value
         ChatColor color = ChatColor.WHITE;
-        if(range > 75) color = ChatColor.DARK_GRAY;
-        else if(range > 50) color = ChatColor.GRAY;
+        if(range > 175) color = ChatColor.DARK_GRAY;
+        else if(range > 75) color = ChatColor.GRAY;
 
         String rangeText = "";
         if(getOwner().hasPermission("chitchat.local.range")){

@@ -40,10 +40,10 @@ public class WhisperChannel extends Channel {
 
     protected String formatInbound(Player player, String message){
         //Inbound messages
-        ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
+        String prefix = (isDefault() ? ChatColor.GRAY.toString() + ":" + ChatColor.DARK_GRAY.toString() : ChatColor.DARK_GRAY.toString());
         return MessageFormat.format("{1}/r {0}[{2}] {3}",
                 ChatColor.AQUA,
-                color,
+                prefix,
                 player.getDisplayName(),
                 message
         );
@@ -51,12 +51,12 @@ public class WhisperChannel extends Channel {
 
     protected String formatOutbound(Player player, String message){
         //Outbound messages
-        ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
+        String prefix = (isDefault() ? ChatColor.GRAY.toString() + ":" + ChatColor.DARK_GRAY.toString() : ChatColor.DARK_GRAY.toString());
         return MessageFormat.format("{3}/rw {0}[{1}{0}] {2}",
                 ChatColor.DARK_AQUA,
                 player.getDisplayName(),
                 message,
-                color
+                prefix
         );
     }
 }

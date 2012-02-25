@@ -45,7 +45,6 @@ public class WhisperCommand implements CommandExecutor {
             
             WhisperChannel senderChannel = new WhisperChannel((Player)sender,"Whisper-"+sender.getName() + "-"+receiver.getName());
             WhisperChannel receiverChannel = new WhisperChannel(receiver,"Whisper-"+sender.getName() + "-"+receiver.getName());
-            //senderChannel.broadcast((Player) sender, message); //Broadcast to the sender channel, so that the sender message displays special
             senderChannel.displayOutbound(receiver,message);
             receiverChannel.displayInbound((Player) sender, message);
         } else {

@@ -1,6 +1,8 @@
 package com.minecarts.chitchat.manager;
 
+import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.WhisperChannel;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -16,10 +18,22 @@ public class WhisperManager {
         return lastSentWhisperTracker.get(player);
     }
 
-    public static void setLastReceivedWhisper(Player player, WhisperChannel channel){
-        //TODO: Add a delay here to prevent whisper stealings .. but make sure it's empty before doing the delay
-        //TODO     eg a whisper in an empty tracker should result in an immediate insert so /r has no delay
-        lastReceivedWhisperTracker.put(player,channel);
+    public static void setLastReceivedWhisper(final Player player, final WhisperChannel channel){
+        if(lastReceivedWhisperTracker.get(player) == null){
+            //No delay if there is no last whisper
+            lastReceivedWhisperTracker.put(player,channel);
+        } else {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(
+                    (ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat"),
+                    new Runnable() {
+                        public void run() {
+                            lastReceivedWhisperTracker.put(player,channel);
+                        }
+                    },
+                    20 * 5 //5 seconds, TODO: This should be a config
+            );
+        }
+        
     }
     public static WhisperChannel getLastReceivedWhisper(Player player){
         return lastReceivedWhisperTracker.get(player);
