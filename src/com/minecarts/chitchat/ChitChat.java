@@ -201,7 +201,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         new Query("INSERT INTO `player_channels` VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE channelId=?,channelName=?,channelIndex=?,isDefault=?") {
             @Override
             public void onAffected(Integer affected) {
-                System.out.println("Updated " + channel.getName() +" channel for " + player.getName());
+
             }
         }.affected(player.getName(),
                 channel.getRawPrefix(),
@@ -218,11 +218,10 @@ public class ChitChat extends JavaPlugin implements Listener {
         new Query("UPDATE `player_channels` SET isDefault=0 WHERE `playerName` = ?") {
             @Override
             public void onAffected(Integer affected) {
-                System.out.println("Reset isDefualt for " + affected + " channels for player " + player.getName());
                 new Query("UPDATE `player_channels` SET isDefault=1 WHERE `playerName` = ? AND `channelId` = ? LIMIT 1") {
                     @Override
                     public void onAffected(Integer affected) {
-                        System.out.println("Set isDefualt to " + channel.getName() + " for " + player.getName());
+
                     }
                 }.affected(player.getName(),
                         channel.getName().toLowerCase());
