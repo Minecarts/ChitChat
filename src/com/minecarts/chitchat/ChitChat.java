@@ -98,9 +98,9 @@ public class ChitChat extends JavaPlugin implements Listener {
         channel.broadcast(new Player[]{e.getPlayer()}, ChatColor.stripColor(e.getMessage()));
         e.setCancelled(true);
     }
-    
 
-    @EventHandler
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player player = e.getPlayer();
         ChannelManager.setJoinLocked(player,true);
