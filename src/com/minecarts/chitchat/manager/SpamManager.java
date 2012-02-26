@@ -2,6 +2,8 @@ package com.minecarts.chitchat.manager;
 
 
 import com.minecarts.chitchat.ChitChat;
+import com.minecarts.chitchat.channel.Channel;
+import com.minecarts.chitchat.channel.ChannelLink;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -13,6 +15,17 @@ import java.util.ListIterator;
 
 public class SpamManager {
     private static HashMap<Player, ArrayList<Long>> messageTracker = new HashMap<Player, ArrayList<Long>>();
+    private static HashMap<Player, String> lastMessage = new HashMap<Player, String>();
+    private static HashMap<Player, ChannelLink> lastChannel = new HashMap<Player, ChannelLink>();
+
+    public static Boolean isRepeatedMessage(Player player, ChannelLink link, String message){
+        if(lastChannel.get(player) == link && lastMessage.get(player).equalsIgnoreCase(message)){
+            return true;
+        }
+        lastMessage.put(player,message);
+        lastChannel.put(player,link);
+        return false;
+    }
     
     public static void checkSpam(Player player){
         ArrayList<Long> timestampHistory = messageTracker.get(player);

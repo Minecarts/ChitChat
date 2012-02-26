@@ -130,6 +130,9 @@ public class ChannelLink {
         //TODO Clean this up, someday
         List<Player> taggedList = Arrays.asList(taggedPlayers);
         if(taggedPlayers != null && taggedPlayers.length > 0){
+            if(SpamManager.isRepeatedMessage(taggedList.get(0),this,message)){
+                return;
+            }
             SpamManager.checkSpam(taggedList.get(0));
         }
 
@@ -142,7 +145,7 @@ public class ChannelLink {
                     break;
                 };
             }
-            if(hasIgnore) continue; //Skip this message if the player is ignoring them
+            if(hasIgnore) continue; //Skip this message if the player is ignoring them           
             if(taggedList.size() == 0){
                 channel.display(message);
                 continue;
