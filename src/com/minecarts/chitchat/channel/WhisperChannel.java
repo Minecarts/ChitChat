@@ -46,7 +46,7 @@ public class WhisperChannel extends Channel {
     @Override
     public String formatMessage(String message){ return message; }
 
-    protected String formatInbound(Player player, String message){
+    public String formatInbound(Player player, String message){
         //Inbound messages
         String prefix = (isDefault() ? ChatColor.GRAY.toString() + ":" + ChatColor.DARK_GRAY.toString() : ChatColor.DARK_GRAY.toString());
         return MessageFormat.format("{1}/r {0}[{2}] {3}",
@@ -57,7 +57,7 @@ public class WhisperChannel extends Channel {
         );
     }
 
-    protected String formatOutbound(Player player, String message){
+    public String formatOutbound(Player player, String message){
         //Outbound messages
         String prefix = (isDefault() ? ChatColor.GRAY.toString() + ":" + ChatColor.DARK_GRAY.toString() : ChatColor.DARK_GRAY.toString());
         return MessageFormat.format("{3}/rw {0}[{1}{0}] {2}",
