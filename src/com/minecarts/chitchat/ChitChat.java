@@ -147,7 +147,7 @@ public class ChitChat extends JavaPlugin implements Listener {
                     }
                 }
                 if(!isReload){
-                    player.sendMessage(MessageFormat.format("You joined {0} channels. Type {1}/ch list{2} for details.",
+                    player.sendMessage(MessageFormat.format(ChatColor.GRAY + "You joined {0} chat channels. Type {1}/ch list{2} for details.",
                             ChannelManager.getVisibleChannelCount(player),
                             ChatColor.YELLOW,
                             ChatColor.WHITE));
