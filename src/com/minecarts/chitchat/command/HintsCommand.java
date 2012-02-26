@@ -15,6 +15,7 @@ import java.util.List;
 
 public class HintsCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!sender.hasPermission("chitchat.admin.hint")) return false;
         String message = StringHelper.join(args, 1);
         if(message.length() == 0){ return false; }
         List<Player> playerMatches = Bukkit.matchPlayer(args[0]);

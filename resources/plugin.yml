@@ -62,6 +62,10 @@ permissions:
             chitchat.admin.force_join: true
             chitchat.ignore.immunity: true
             chitchat.announcement.chat: true
+            chitchat.admin.hint: true
+    chitchat.admin.hint:
+        description: "Issue hints to players"
+        default: op
     chitchat.admin.reload:
         description: "Reload all channel setting configuration settings"
         default: op
