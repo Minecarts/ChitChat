@@ -4,6 +4,8 @@ import com.minecarts.chitchat.channel.Channel;
 import com.minecarts.chitchat.channel.LocalChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import helper.StringHelper;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,6 +27,9 @@ public class SayCommand implements CommandExecutor {
                     return true;
                 }
             }
+        } else {
+            Bukkit.broadcastMessage(ChatColor.YELLOW + "[Server] " + message);
+            return true;
         }
 
         return false;
