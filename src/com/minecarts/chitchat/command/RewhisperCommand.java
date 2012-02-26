@@ -15,18 +15,21 @@ public class RewhisperCommand implements CommandExecutor {
         if(args.length == 0) return false;
         String message = StringHelper.join(args, 0);
         WhisperChannel channel = WhisperManager.getLastSentWhisper((Player) sender);
+        if(channel == null){
+            channel = WhisperManager.getLastReceivedWhisper((Player)sender);
+            if(channel == null){
+                sender.sendMessage("You must whisper a player before you can rewhisper.");
+                return true;
+            }
+        }
         if(!channel.target().isOnline()){
             sender.sendMessage(MessageFormat.format("{0} is no longer online.",
                     channel.target()
             ));
             return true;
         }
-        if(channel == null){
-            sender.sendMessage("You have sent no whispers yet.");
-            return true;
-        }
         channel.setDefault();
-        channel.broadcastExceptPlayer(channel.getOwner(),channel.target(),message);
+        channel.broadcastExceptPlayer(channel.getOwner(),channel.getOwner(),message);
         channel.displayOutbound(channel.target(), channel.formatMessage(channel.target(), message));
         //channel.broadcast(new Player[] {(Player) sender, channel.target()}, message);
         return true;

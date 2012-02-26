@@ -15,14 +15,18 @@ public class ReplyCommand implements CommandExecutor {
         if(args.length == 0) return false;
         String message = StringHelper.join(args, 0);
         WhisperChannel channel = WhisperManager.getLastReceivedWhisper((Player) sender);
+        if(channel == null){
+            //Try to do a rewhisper
+            channel = WhisperManager.getLastSentWhisper((Player) sender);
+            if(channel == null){
+                sender.sendMessage("A player must whisper you before you can reply.");
+                return true;
+            }
+        }
         if(!channel.target().isOnline()){
             sender.sendMessage(MessageFormat.format("{0} is no longer online.",
                     channel.target()
                     ));
-            return true;
-        }
-        if(channel == null){
-            sender.sendMessage("You have received no whispers recently.");
             return true;
         }
         if(channel.setDefault()){
