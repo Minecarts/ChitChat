@@ -15,9 +15,16 @@ public class AnnouncementChannel extends PrefixChannel {
     @Override
     public String formatMessage(Player player, String message){
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
-        return MessageFormat.format("{0} {1}",
+
+        String sender = "";
+        if(getOwner().hasPermission("chitchat.announcement.chat")){
+            sender = " <" + player.getDisplayName()+ ">";
+        }
+        
+        return MessageFormat.format("{0}{2} {1}",
                 this.getPrefix(), //0
-                message //1
+                message, //1
+                sender
         );
     }
 
