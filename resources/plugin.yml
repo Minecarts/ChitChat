@@ -47,12 +47,28 @@ commands:
     announce:
         description: Announce to the announcement channel
         usage: /<command> [msg]
+    hint:
+        aliases: [tip]
+        description: Give a hint to a player
+        usage: /<command> [player] [msg]
 permissions:
+    chitchat.admin.reload:
+        description: "Reload all channel setting configuration settings"
+        default: op
     chitchat.admin.chat:
         description: "Allows a player to chat in administrative channels"
         default: op
     chitchat.admin.mute:
         description: "Allows muting of other players"
+        defualt: op
+    chitchat.admin.list:
+        description: "List another players channels"
+        defualt: op
+    chitchat.admin.force_join:
+        description: "Force join a player to a channel"
+        defualt: op
+    chitchat.admin.mute:
+        description: "Mute other players in global channels"
         defualt: op
     chitchat.channel.chat:
         description: "Allow a player to chat in a channel"

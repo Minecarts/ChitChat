@@ -44,7 +44,7 @@ public class JoinCommand implements CommandExecutor {
                     }
                     return true;
                 case 2: //Force join a player
-                    //TODO: Add permissions check
+                    if(!sender.hasPermission("chitchat.admin.force_join")) return false;
                     List<Player> players = Bukkit.matchPlayer(args[0]);
                     if(players.size() != 1) {
                         sender.sendMessage("Unable to force join, matched " + players.size() + " players.");

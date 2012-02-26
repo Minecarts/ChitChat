@@ -30,7 +30,7 @@ public class WhisperManager {
                             lastReceivedWhisperTracker.put(player,channel);
                         }
                     },
-                    20 * 5 //5 seconds, TODO: This should be a config
+                    20 * PluginManager.config().getInt("channel.whisper.interrupt_timeout")
             );
         }
         

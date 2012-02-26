@@ -3,6 +3,7 @@ package com.minecarts.chitchat.command;
 import com.minecarts.chitchat.channel.Channel;
 import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
+import com.minecarts.chitchat.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,12 +19,21 @@ public class ChannelCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(args.length == 0) return false;
 
+        if(args[0].equalsIgnoreCase("reload")){
+            if(!sender.hasPermission("chitchat.admin.reload")) return true;
+            PluginManager.plugin().reloadConfig();
+            sender.sendMessage("ChitChat config reloaded.");
+            return true;
+        }
+
         if(args[0].equalsIgnoreCase("list")){
             Player player = null;
             if(args.length == 1 && sender instanceof Player){
                 player = (Player)sender;
             } else if (args.length == 2 && Bukkit.getPlayer(args[1]) != null){
-                //TODO: Permissions check on this to list another players channels
+                if(!sender.hasPermission("chitchat.admin.list")){
+                    return false;
+                }
                 player = Bukkit.getPlayer(args[1]);
             }
 

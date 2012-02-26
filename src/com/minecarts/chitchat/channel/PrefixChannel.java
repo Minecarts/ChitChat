@@ -3,6 +3,7 @@ package com.minecarts.chitchat.channel;
 import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.LanguageManager;
+import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -28,7 +29,7 @@ public class PrefixChannel extends Channel{
     public PrefixChannel(Player player, String name){
         super(player,name);
         final ArrayList<String> usedPrefixes = ChannelManager.getUsedPrefix(player);
-        for(Integer i = 1; i < 50; i++){ //TODO: Make this a config value
+        for(Integer i = 1; i < PluginManager.config().getInt("channel.prefix.max_channels"); i++){
             if(!usedPrefixes.contains(i.toString())){
                 this.prefix = i.toString();
                 break;
@@ -52,7 +53,6 @@ public class PrefixChannel extends Channel{
 
         ChannelManager.markPrefixUsed(this.player,this.prefix);
 
-        //TODO: Permanent and announcment channels should not announce joins...
         if(!suppressJoinSelf){
             this.display("You joined the channel (" + getName() + ").");
         }

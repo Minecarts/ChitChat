@@ -43,14 +43,18 @@ public class WhisperCommand implements CommandExecutor {
                 return true;
             }
             
-            WhisperChannel senderChannel = new WhisperChannel((Player)sender,"Whisper-"+sender.getName() + "-"+receiver.getName());
-            WhisperChannel receiverChannel = new WhisperChannel(receiver,"Whisper-"+sender.getName() + "-"+receiver.getName());
-            
-            senderChannel.target(receiver);
-            receiverChannel.target((Player)sender);
-            
-            senderChannel.displayOutbound(receiver,message);
-            receiverChannel.displayInbound((Player) sender, message);
+            if(sender instanceof Player){
+                WhisperChannel senderChannel = new WhisperChannel((Player)sender,"Whisper-"+sender.getName() + "-"+receiver.getName());
+                WhisperChannel receiverChannel = new WhisperChannel(receiver,"Whisper-"+sender.getName() + "-"+receiver.getName());
+
+                senderChannel.target(receiver);
+                receiverChannel.target((Player)sender);
+
+                senderChannel.displayOutbound(receiver,message);
+                receiverChannel.displayInbound((Player) sender, message);
+            } else {
+                playermatches.get(0).sendMessage(ChatColor.GRAY + message);
+            }
         } else {
             sender.sendMessage("Could not find anyone online by that name.");
         }

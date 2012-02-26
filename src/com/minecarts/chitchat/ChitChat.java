@@ -6,6 +6,7 @@ import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.command.*;
 import com.minecarts.chitchat.manager.GagManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
+import com.minecarts.chitchat.manager.PluginManager;
 import com.minecarts.dbquery.DBQuery;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -29,6 +30,7 @@ public class ChitChat extends JavaPlugin implements Listener {
     private final Random random = new Random();
 
     public void onEnable(){
+        PluginManager.plugin(this);
         dbq = (DBQuery) getServer().getPluginManager().getPlugin("DBQuery");
         getServer().getPluginManager().registerEvents(this,this);
         //Register our commands
@@ -42,6 +44,8 @@ public class ChitChat extends JavaPlugin implements Listener {
             getCommand("ignore").setExecutor(new IgnoreCommand());
             getCommand("mute").setExecutor(new MuteCommand(this));
             getCommand("unmute").setExecutor(new UnmuteCommand());
+            getCommand("announce").setExecutor(new AnnounceCommand());
+            getCommand("hint").setExecutor(new HintsCommand());
             //getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels
@@ -61,10 +65,6 @@ public class ChitChat extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         String[] args = event.getMessage().replaceAll(" +", " ").split(" ", 2);
         String prefix = args[0].replaceAll("/", "");
-
-        //Handle any aliases we may have defined
-        //  TODO: Make a config
-        if(prefix.equalsIgnoreCase("announce")) prefix = "!";
 
         PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, prefix);
         if(channel == null){
@@ -186,7 +186,7 @@ public class ChitChat extends JavaPlugin implements Listener {
             }
         }.affected(
                 player.getName(),
-                "Your keyboard must be overheating...why don't you take a little break?", //TODO: Config
+                PluginManager.config().getString("spam.ban_message"),
                 "plugin.ChitChat",
                 15
         );

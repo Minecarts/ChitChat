@@ -3,6 +3,7 @@ package com.minecarts.chitchat.channel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.WhisperManager;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;

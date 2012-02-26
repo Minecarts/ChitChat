@@ -24,7 +24,7 @@ public class HintsCommand implements CommandExecutor {
             sender.sendMessage("There were " + numMatches + " players matching \""+args[0]+"\". Please be more specific.");
         } else if (numMatches == 1) {
             Player player = playerMatches.get(0);
-            player.sendMessage(ChatColor.GRAY + message);
+            player.sendMessage(ChatColor.YELLOW + "[TIP] " + ChatColor.GRAY + message);
             sender.sendMessage(ChatColor.GRAY + " > " + player.getDisplayName() + ": " + message);
         } else {
             sender.sendMessage("Could not find anyone online by that name.");

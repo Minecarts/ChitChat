@@ -28,7 +28,7 @@ public class SpamManager {
         while(itr.hasPrevious()) {
             Long checkTime = itr.previous();
             Long elapsedTime = messageTime - checkTime;
-            if(elapsedTime > (4 * 1000)){ //TODO Config
+            if(elapsedTime > (PluginManager.config().getInt("spam.timeout") * 1000)){
                 if(itr.previousIndex() >= 0) {
                     //Why +2? Not sure, becuase previousIndex off by 1, and this is a count not a index? investigate this someday.
                     //  could be a bug in NormalizedDrops if this is the case
@@ -37,10 +37,10 @@ public class SpamManager {
                 break;
             }
         }
-        if(timestampHistory.size() > 5){ //TODO Config
+        if(timestampHistory.size() > PluginManager.config().getInt("spam.quantity")){
         //Spamming
             ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbInsertBan(player);
-            player.kickPlayer("Your keyboard must be overheating...why don't you take a little break?"); //TODO: Config
+            player.kickPlayer(PluginManager.config().getString("spam.ban_message"));
         }
         messageTracker.put(player,timestampHistory);
     }

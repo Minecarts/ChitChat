@@ -1,2 +1,20 @@
+messages:
+    CHANNEL_GAGGED: "You have been muted and can not chat in this public channel. Use /join ChannelName to join your own private channel."
+    CHANNEL_NOSPEAK: "You do not have permissions to chat in this channel."
+    PLAYER_GAGGED: "You have lost your privilege to speak in global chat channels. This can happen with excessive vular language, ALL CAPS, or too much chatter between you and another player. Please consider using local chat or a custom chat channel. Type /help or visit Minecarts.com for a detailed list of commands and instructions."
+channel:
+    say:
+        range:
+            gray: 75
+            dark: 175
+            oor: 200
+    prefix:
+        max_channels: 50
+    whisper:
+        interrupt_timeout: 4 #timeout to prevent whisper interruption, in seconds
+spam:
+    timeout: 4 #Seconds
+    quantity: 5 #Messages in timeout seconds
+    ban_message: "Your keyboard must be overheating...why don't you take a little break?"
 db:
     provider: "minecarts"

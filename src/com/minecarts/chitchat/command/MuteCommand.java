@@ -4,6 +4,7 @@ import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.GagManager;
+import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,7 +23,7 @@ public class MuteCommand implements CommandExecutor {
     }
     
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        //TODO: Permissions check
+        if(!sender.hasPermission("chitchat.admin.mute")) return true;
         if(args.length != 1 && args.length != 2) return false;
         
         int durationTicks = (20 * 60) * 15; 
@@ -52,7 +53,6 @@ public class MuteCommand implements CommandExecutor {
         announcement.canChat(false);
         GagManager.gag(matchedPlayer); //Store the gag to auto gag on login
 
-        //TODO: These messages should be config values.
         Integer minutes = (durationTicks / 20 / 60);
         sender.sendMessage("You have muted " + matchedPlayer.getDisplayName() + " for " + minutes + " minutes");
         for(Player p : Bukkit.getOnlinePlayers()){
@@ -60,7 +60,7 @@ public class MuteCommand implements CommandExecutor {
             if(p.equals(sender)) continue;
             p.sendMessage(sender.getName() + " muted " + matchedPlayer.getDisplayName() + " for " + minutes + " minutes.");
         }
-        matchedPlayer.sendMessage("You have been muted.");
+        matchedPlayer.sendMessage(PluginManager.config().getString("messages.PLAYER_GAGGED"));
         
         Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin,new Runnable() {
             public void run() {

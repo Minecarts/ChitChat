@@ -8,11 +8,19 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.MessageFormat;
+
 public class ReplyCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(args.length == 0) return false;
         String message = StringHelper.join(args, 0);
-        WhisperChannel channel = WhisperManager.getLastReceivedWhisper((Player)sender);
+        WhisperChannel channel = WhisperManager.getLastReceivedWhisper((Player) sender);
+        if(!channel.target().isOnline()){
+            sender.sendMessage(MessageFormat.format("{0} is no longer online.",
+                    channel.target()
+                    ));
+            return true;
+        }
         if(channel == null){
             sender.sendMessage("You have received no whispers recently.");
             return true;

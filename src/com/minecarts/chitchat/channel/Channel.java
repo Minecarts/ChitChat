@@ -1,14 +1,13 @@
 package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
-import com.minecarts.chitchat.manager.IgnoreManager;
+import com.minecarts.chitchat.manager.GagManager;
 import com.minecarts.chitchat.manager.LanguageManager;
+import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 abstract public class Channel {
@@ -128,7 +127,11 @@ abstract public class Channel {
     
     public Boolean canChat(){
         if(!this.canChat){
-            this.display("You've been muted and can not chat in this channel."); //TODO: message from config
+            if(GagManager.isGagged(getOwner())){
+                this.display(PluginManager.config().getString("messages.CHANNEL_GAGGED"));
+            } else {
+                this.display(PluginManager.config().getString("messages.CHANNEL_NOSPEAK"));
+            }
         }
         return this.canChat;
     }
