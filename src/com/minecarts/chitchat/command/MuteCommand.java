@@ -58,7 +58,7 @@ public class MuteCommand implements CommandExecutor {
         for(Player p : Bukkit.getOnlinePlayers()){
             if(!p.hasPermission("chitchat.admin.mute")) continue;
             if(p.equals(sender)) continue;
-            p.sendMessage(sender.getName() + " muted " + matchedPlayer.getDisplayName() + " for " + minutes + " minutes.");
+            p.sendMessage(sender.getName() + " muted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + " for " + minutes + " minutes.");
         }
         matchedPlayer.sendMessage(PluginManager.config().getString("messages.PLAYER_GAGGED"));
         
