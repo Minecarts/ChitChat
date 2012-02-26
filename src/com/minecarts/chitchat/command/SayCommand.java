@@ -18,7 +18,9 @@ public class SayCommand implements CommandExecutor {
             for(Channel channel : ChannelManager.getPlayerChannels(player)){
                 if(channel instanceof LocalChannel){
                     LocalChannel lc = (LocalChannel) channel;
-                    lc.setDefault();
+                    if(lc.setDefault()){
+                        //Set default;
+                    }
                     lc.broadcast(new Player[] {(Player) sender},message);
                     return true;
                 }
