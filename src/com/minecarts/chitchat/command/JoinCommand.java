@@ -19,6 +19,10 @@ public class JoinCommand implements CommandExecutor {
             switch(args.length){
                 case 1: //Join a channel
                     if(!(sender instanceof Player)) return true;
+                    if(!(sender.hasPermission("chitchat.channel.join"))){
+                        sender.sendMessage("You are not allowed to join chat channels.");
+                        return true;
+                    }
 
                     Player player = (Player)sender;
                     try{

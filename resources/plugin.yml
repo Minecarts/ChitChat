@@ -52,15 +52,22 @@ commands:
         description: Give a hint to a player
         usage: /<command> [player] [msg]
 permissions:
+    chitchat.admin.*:
+        description: "Access to all ChitChat admin commands"
+        children:
+            chitchat.admin.reload: true
+            chitchat.admin.chat: true
+            chitchat.admin.mute: true
+            chitchat.admin.list: true
+            chitchat.admin.force_join: true
+            chitchat.ignore.immunity: true
+            chitchat.announcement.chat: true
     chitchat.admin.reload:
         description: "Reload all channel setting configuration settings"
         default: op
     chitchat.admin.chat:
         description: "Allows a player to chat in administrative channels"
         default: op
-    chitchat.admin.mute:
-        description: "Allows muting of other players"
-        defualt: op
     chitchat.admin.list:
         description: "List another players channels"
         defualt: op
@@ -70,15 +77,9 @@ permissions:
     chitchat.admin.mute:
         description: "Mute other players in global channels"
         defualt: op
-    chitchat.channel.chat:
-        description: "Allow a player to chat in a channel"
-        default: true
     chitchat.channel.join:
         description: "Allow a player to join channels"
         default: true
-    chitchat.who.detail:
-        description: "Show detailed who info"
-        default: op
     chitchat.local.range:
         description: "Show the range in local chat channels"
         default: false
