@@ -81,7 +81,7 @@ public class PrefixChannel extends Channel{
             this.display("You joined the channel (" + getName() + ").");
         }
         if(!suppressJoinOther){
-            this.broadcastExceptPlayer(this.player, this.player.getDisplayName() + " joined the channel.");
+            this.broadcastExceptPlayer(this.player, this.player.getDisplayName() + this.color() + " joined the channel.");
         }
         return true;
     }
@@ -99,7 +99,7 @@ public class PrefixChannel extends Channel{
             this.display("You left the channel (" + getName() + ").");
         }
         if(!silentQuitOther){
-            this.broadcastExceptPlayer(this.player, this.player.getDisplayName() + " left the channel.");
+            this.broadcastExceptPlayer(this.player, this.player.getDisplayName() + this.color() +" left the channel.");
         }
         return true;
     }

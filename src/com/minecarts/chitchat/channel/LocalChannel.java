@@ -31,6 +31,7 @@ public class LocalChannel extends Channel{
         );
     }
     protected String formatMessage(Player player, String message){
+        if(player.getWorld() != getOwner().getWorld()) return null;
         Double range = player.getLocation().distance(getOwner().getLocation());
         if(range > PluginManager.config().getInt("channel.say.range.oor")) return null; //Null messages wont be displayed
 
@@ -48,7 +49,7 @@ public class LocalChannel extends Channel{
             rangeText = "." + Math.round(range) + "";
         }
 
-        return MessageFormat.format("{3}/s{2}{4} <{0}> {1}",
+        return MessageFormat.format("{3}/s{2}{4} <{0}{4}> {1}",
                 player.getDisplayName(), //0
                 message, //1
                 rangeText, //2
