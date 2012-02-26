@@ -46,7 +46,7 @@ abstract public class Channel {
     public Set<String> getMemberNames(){
         Set<String> members = new HashSet<String>();
         for(Player p : this.getLink().getMembers()){
-            members.add(p.getDisplayName());
+            members.add(p.getDisplayName() + this.color());
         }
         return members;
     }
