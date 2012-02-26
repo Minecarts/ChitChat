@@ -50,7 +50,7 @@ public class WhisperChannel extends Channel {
     public String formatInbound(Player player, String message){
         //Inbound messages
         String prefix = (isDefault() ? ChatColor.GRAY.toString() + ":" + ChatColor.DARK_GRAY.toString() : ChatColor.DARK_GRAY.toString());
-        return MessageFormat.format("{1}/r {0}[{2}] {3}",
+        return MessageFormat.format("{1}/r {0}[{2}{0}] {3}",
                 ChatColor.AQUA,
                 prefix,
                 player.getDisplayName(),
