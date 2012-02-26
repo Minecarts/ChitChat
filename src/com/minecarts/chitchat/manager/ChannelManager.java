@@ -16,9 +16,19 @@ public class ChannelManager {
     private static HashMap<Player, Channel> defaultChannelMap = new HashMap<Player, Channel>();
     private static HashMap<Player, ArrayList<Channel>> playerChannelList = new HashMap<Player, ArrayList<Channel>>();
     private static HashMap<Player, ArrayList<String>> playerPrefixUsage = new HashMap<Player, ArrayList<String>>();
+    private static HashMap<Player, Boolean> loginJoinLock = new HashMap<Player, Boolean>();
 
     public static Boolean isChannelNameJoinRestricted(String channelName){
         return channelName.equalsIgnoreCase("Subscriber") || channelName.equalsIgnoreCase("Admin");
+    }
+    
+//Join query locking
+    public static Boolean isJoinLocked(Player player){
+        if(!loginJoinLock.containsKey(player)) return false;
+        return loginJoinLock.get(player);
+    }
+    public static void setJoinLocked(Player player, Boolean locked){
+        loginJoinLock.put(player,locked);
     }
 
 //ChannelLinks

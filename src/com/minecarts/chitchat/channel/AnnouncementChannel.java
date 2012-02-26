@@ -17,8 +17,8 @@ public class AnnouncementChannel extends PrefixChannel {
         ChatColor color = (isDefault()) ? ChatColor.GRAY : ChatColor.DARK_GRAY;
 
         String sender = "";
-        if(getOwner().hasPermission("chitchat.announcement.chat")){
-            sender = " <" + player.getDisplayName()+ ">";
+        if(getOwner().hasPermission("chitchat.announcement.chat") && player.hasPermission("chitchat.announcement.chat")){
+            sender = ChatColor.DARK_GRAY + " " + player.getName()+ ":" + this.color();
         }
         
         return MessageFormat.format("{0}{2} {1}",

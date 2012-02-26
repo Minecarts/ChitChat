@@ -50,6 +50,7 @@ public class ChitChat extends JavaPlugin implements Listener {
 
         //Join existing players to our default / static channels
         for(Player player : Bukkit.getOnlinePlayers()){
+            ChannelManager.setJoinLocked(player,true);
             this.joinPlayerToStaticChannels(player,true);
             this.joinPlayerToDynamicChannels(player,true);
             this.dbLoadIgnores(player);
@@ -74,7 +75,7 @@ public class ChitChat extends JavaPlugin implements Listener {
             ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(player, channel);
         }
         if(args.length == 1){
-            player.sendMessage(MessageFormat.format("{{0} {2}[{1}] is now your default chat channel.",
+            player.sendMessage(MessageFormat.format("{0} {2}[{1}] is now your default chat channel.",
                     channel.getPrefix(),
                     channel.getName(),
                     ChatColor.DARK_GRAY
@@ -102,6 +103,7 @@ public class ChitChat extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player player = e.getPlayer();
+        ChannelManager.setJoinLocked(player,true);
         //Query the channels for this player and join them to them, in addition to global and announce
         this.joinPlayerToStaticChannels(player,false);
         this.joinPlayerToDynamicChannels(player,false);
@@ -152,6 +154,7 @@ public class ChitChat extends JavaPlugin implements Listener {
                             ChatColor.YELLOW,
                             ChatColor.GRAY));
                 }
+                ChannelManager.setJoinLocked(player,false);
             }
         }.fetch(player.getName());
     }
@@ -194,6 +197,7 @@ public class ChitChat extends JavaPlugin implements Listener {
 
     //Channels
     public void dbUpdateChannel(final Player player, final PrefixChannel channel){
+        if(!channel.shouldSave()) return;
         new Query("INSERT INTO `player_channels` VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE channelId=?,channelName=?,channelIndex=?,isDefault=?") {
             @Override
             public void onAffected(Integer affected) {
@@ -215,13 +219,13 @@ public class ChitChat extends JavaPlugin implements Listener {
             @Override
             public void onAffected(Integer affected) {
                 System.out.println("Reset isDefualt for " + affected + " channels for player " + player.getName());
-
                 new Query("UPDATE `player_channels` SET isDefault=1 WHERE `playerName` = ? AND `channelId` = ? LIMIT 1") {
                     @Override
                     public void onAffected(Integer affected) {
                         System.out.println("Set isDefualt to " + channel.getName() + " for " + player.getName());
                     }
-                }.affected(channel.getName().toLowerCase());
+                }.affected(player.getName(),
+                        channel.getName().toLowerCase());
             }
         }.affected(player.getName());
     }

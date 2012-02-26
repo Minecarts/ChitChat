@@ -1,3 +1,12 @@
+colors:
+    - LIGHT_PURPLE
+    - DARK_GREEN
+    - DARK_RED
+    - BLUE
+    - GREEN
+    - RED
+    - GOLD
+
 messages:
     CHANNEL_GAGGED: "You have been muted and can not chat in this public channel. Use /join ChannelName to join your own private channel."
     CHANNEL_NOSPEAK: "You do not have permissions to chat in this channel."

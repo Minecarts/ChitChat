@@ -24,7 +24,10 @@ public class LeaveCommand implements CommandExecutor {
             return true;
         }
         if(channel.isDefault()){ //Reset the default channel to global if they leave their default channel
-            ChannelManager.getChannelFromPrefix((Player)sender,"g").setDefault();
+            PrefixChannel global = ChannelManager.getChannelFromPrefix((Player)sender,"g");
+            if(global.setDefault()){
+                global.display(ChatColor.GRAY + "You left your default channel. Global is now your default.");
+            }
         }
         if(channel.leave(false,false)){
             //Only remove the channel from the DB if they successfully left

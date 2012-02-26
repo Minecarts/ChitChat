@@ -58,6 +58,15 @@ public class ChannelLink {
         }
     }
 
+    public void relayMessageExceptPlayer(Player exception, Player sender, String message){
+        this.logMessage(null,message);
+        for(Channel channel : this.members.values()){
+            if(channel.getOwner().equals(exception)){
+                continue;
+            }
+            channel.displayInbound(sender, message);
+        }
+    }
     public void relayMessageExceptPlayer(Player exception, String message){
         this.logMessage(null,message);
         for(Channel channel : this.members.values()){
@@ -117,7 +126,35 @@ public class ChannelLink {
         }
     }
     public void relayMessage(Player[] taggedPlayers, String message){
-        relayMessage(taggedPlayers,message,null);
+        //We have to handle messages here ourselves because players can exploit messageFormat by sending a formatted message
+        //TODO Clean this up, someday
+        List<Player> taggedList = Arrays.asList(taggedPlayers);
+        if(taggedPlayers != null && taggedPlayers.length > 0){
+            SpamManager.checkSpam(taggedList.get(0));
+        }
+
+        for(Channel channel : this.members.values()){
+            //Check ignores
+            boolean hasIgnore = false;
+            for(Player p : taggedPlayers){
+                if(IgnoreManager.isIgnoring(channel.getOwner(), p.getName())){
+                    hasIgnore = true;
+                    break;
+                };
+            }
+            if(hasIgnore) continue; //Skip this message if the player is ignoring them
+            if(taggedList.size() == 0){
+                channel.display(message);
+                continue;
+            }
+            if(taggedList.contains(channel.getOwner())){
+                channel.displayOutbound(taggedList.get(0),message); //The primary player is index 0
+                continue;
+            }
+            channel.displayInbound(taggedList.get(0), message);
+        }
+
+        //relayMessage(taggedPlayers,message,null);
     }
     public void relayMessage(String message){
         relayMessage(null,message,null);

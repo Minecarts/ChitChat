@@ -8,36 +8,60 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.awt.*;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class PrefixChannel extends Channel{
 
     private Player player;
     private String prefix;
-    private final ChatColor[] colors = {ChatColor.GREEN, ChatColor.BLUE, ChatColor.LIGHT_PURPLE, ChatColor.DARK_GREEN, ChatColor.DARK_RED, ChatColor.RED, ChatColor.GOLD};
+    private boolean shouldSave = true;
+    private ArrayList<ChatColor> colors = new ArrayList<ChatColor>();
+
+    private void getColorsFromConfig(){
+        List<String> colorNames = PluginManager.config().getStringList("colors");
+        for(String color : colorNames){
+            colors.add(ChatColor.valueOf(color));
+        }
+    }
 
     public PrefixChannel(Player player, String name, String prefix){
         super(player,name);
+        getColorsFromConfig();
+
         this.player = player;
         this.prefix = prefix;
+
+        //If it doesn't have a numeric prefix, this channel shouldn't be saveable
+        try{
+            Integer.parseInt(this.prefix);
+        } catch (NumberFormatException e){
+            shouldSave = false;
+        }
     }
 
     public PrefixChannel(Player player, String name){
         super(player,name);
+        getColorsFromConfig();
+
         final ArrayList<String> usedPrefixes = ChannelManager.getUsedPrefix(player);
         for(Integer i = 1; i < PluginManager.config().getInt("channel.prefix.max_channels"); i++){
             if(!usedPrefixes.contains(i.toString())){
                 this.prefix = i.toString();
+                shouldSave = true;
                 break;
             }
         }
         this.player = player;
     }
 
+    
+    public Boolean shouldSave(){
+        return this.shouldSave;
+    }
+    public void shouldSave(Boolean save){
+        this.shouldSave = save;
+    }
 
     public Boolean join(boolean suppressJoinSelf, boolean suppressJoinOther){
         if(this.prefix == null){
@@ -106,7 +130,7 @@ public class PrefixChannel extends Channel{
         if(super.color() != null) return super.color(); //Return the channel color if it's specifically set
         try{
             Integer index = Integer.parseInt(this.prefix);
-            return colors[index % colors.length];
+            return colors.get(index % colors.size());
         } catch (NumberFormatException e){
             System.out.println("ChitChat> Prefix was not able to be colored" + this.prefix);
             return ChatColor.WHITE;

@@ -23,8 +23,11 @@ public class JoinCommand implements CommandExecutor {
                         sender.sendMessage("You are not allowed to join chat channels.");
                         return true;
                     }
-
                     Player player = (Player)sender;
+                    if(ChannelManager.isJoinLocked(player)){
+                        player.sendMessage("Please wait a moment for your channels to load before joining additional channels.");
+                        return true;
+                    }
                     try{
                         Integer.parseInt(args[0]);
                         sender.sendMessage("Please join a channel with a name such as " + ChatColor.YELLOW + "/join MyName" + ChatColor.WHITE + ".");
@@ -55,6 +58,12 @@ public class JoinCommand implements CommandExecutor {
                         return true;
                     }
                     Player targetPlayer = players.get(0);
+
+                    if(ChannelManager.isJoinLocked(targetPlayer)){
+                        sender.sendMessage(targetPlayer.getName() + "is still loading their channels. Try again in a few seconds.");
+                        return true;
+                    }
+
                     PrefixChannel forceChannel = new PrefixChannel(targetPlayer,args[1]);
                     forceChannel.join(false,false);
                     forceChannel.setDefault();

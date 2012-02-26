@@ -74,6 +74,10 @@ abstract public class Channel {
     }
 
     //Outbound
+    public void broadcastExceptPlayer(Player exception, Player sender, String message){
+        if(!this.canChat()) return;
+        getLink().relayMessageExceptPlayer(exception,sender,message);
+    }
     public void broadcastExceptPlayer(Player exception, String message){
         if(!this.canChat()) return;
         getLink().relayMessageExceptPlayer(exception,message);
