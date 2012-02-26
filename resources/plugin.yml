@@ -45,6 +45,7 @@ commands:
         description: Ungag a player who has been previously gagged
         usage: /<command> [player]
     announce:
+        aliases: [broadcast]
         description: Announce to the announcement channel
         usage: /<command> [msg]
     hint:
