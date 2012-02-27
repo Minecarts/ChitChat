@@ -15,7 +15,7 @@ commands:
         description: Privately message a player
         usage: /<command> [player] [msg]
     say:
-        aliases: [s]
+        aliases: [s,local,l]
         description: Chat with players nearby
         usage: /<command> [msg]
     join:
