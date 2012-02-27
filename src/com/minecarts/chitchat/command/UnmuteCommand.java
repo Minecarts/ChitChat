@@ -27,11 +27,19 @@ public class UnmuteCommand implements CommandExecutor {
             return true;
         }
 
-        PrefixChannel global = ChannelManager.getChannelFromPrefix(matches.get(0), "g");
-        PrefixChannel announce = ChannelManager.getChannelFromPrefix(matches.get(0), "!");
+        Player matchedPlayer = matches.get(0);
+        PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer, "g");
+        PrefixChannel announce = ChannelManager.getChannelFromPrefix(matchedPlayer, "!");
         global.canChat(true);
         announce.canChat(true);
         GagManager.ungag(matches.get(0));
+
+        sender.sendMessage("You have unmuted " + matchedPlayer.getDisplayName() + ".");
+        for(Player p : Bukkit.getOnlinePlayers()){
+            if(!p.hasPermission("chitchat.admin.mute")) continue;
+            if(p.equals(sender)) continue;
+            p.sendMessage(sender.getName() + " unmuted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + ".");
+        }
 
         return true;
     }
