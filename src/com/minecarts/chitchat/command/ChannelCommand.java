@@ -26,7 +26,7 @@ public class ChannelCommand implements CommandExecutor {
             return true;
         }
 
-        if(args[0].equalsIgnoreCase("list")){
+        if(args[0].equalsIgnoreCase("list") || args[0].equalsIgnoreCase("who")){
             Player player = null;
             if(args.length == 1 && sender instanceof Player){
                 player = (Player)sender;
