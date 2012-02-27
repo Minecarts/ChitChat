@@ -235,7 +235,7 @@ public class ChitChat extends JavaPlugin implements Listener {
             @Override
             public void onAffected(Integer affected) {
                 if(affected == 0){
-                    player.sendMessage("Channel " + channel.getName() + " with prefix " + channel.getPrefix() + " not in DB.");
+                    //player.sendMessage("Channel " + channel.getName() + " with prefix " + channel.getPrefix() + " not in DB.");
                 }
             }
         }.affected(player.getName(),
