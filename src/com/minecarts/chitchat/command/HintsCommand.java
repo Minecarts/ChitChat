@@ -25,7 +25,7 @@ public class HintsCommand implements CommandExecutor {
             sender.sendMessage("There were " + numMatches + " players matching \""+args[0]+"\". Please be more specific.");
         } else if (numMatches == 1) {
             Player player = playerMatches.get(0);
-            player.sendMessage(ChatColor.YELLOW + "[TIP] " + ChatColor.GRAY + message);
+            player.sendMessage(ChatColor.AQUA + "[TIP] " + ChatColor.GRAY + message);
             //sender.sendMessage(ChatColor.GRAY + " > " + player.getDisplayName() + ": " + message);
             Bukkit.broadcast(ChatColor.GRAY + "Tip: " + sender.getName() + " > " + player.getName() + ": " + message,"chitchat.admin.hint");
         } else {
