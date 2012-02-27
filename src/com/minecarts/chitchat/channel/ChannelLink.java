@@ -176,6 +176,9 @@ public class ChannelLink {
             }
             channel.displayInbound(taggedList.get(0), message);
         }
+        
+        //Log it to the console
+        logMessage(taggedList.get(0),message);
 
         //relayMessage(taggedPlayers,message,null);
     }
