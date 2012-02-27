@@ -50,7 +50,7 @@ public class ChannelCommand implements CommandExecutor {
                         return true;
                     }
                     sender.sendMessage(channel.color() + "---- Players in " +channel.getName() +" (" + channel.getPrefix() + ") -----");
-                    sender.sendMessage(StringUtils.join(channel.getMemberNames(),", "));
+                    sender.sendMessage(StringUtils.join(channel.getMemberNames((Player)sender),", "));
                     return true;
                 } else {
                     sender.sendMessage("Could not query player channels. No player found?");

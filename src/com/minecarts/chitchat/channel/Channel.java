@@ -42,6 +42,16 @@ abstract public class Channel {
     public Set<Player> getMembers(){
         return this.getLink().getMembers();
     }
+
+
+    public Set<String> getMemberNames(Player visibleCheck){
+        Set<String> members = new HashSet<String>();
+        for(Player p : this.getLink().getMembers()){
+            if(!p.canSee(visibleCheck)) continue;
+            members.add(p.getDisplayName() + this.color());
+        }
+        return members;
+    }
     
     public Set<String> getMemberNames(){
         Set<String> members = new HashSet<String>();
