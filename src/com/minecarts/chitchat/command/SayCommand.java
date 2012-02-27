@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 public class SayCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String message = StringHelper.join(args, 0);
-        if(message.length() == 0){ return false; }
         if(sender instanceof Player){
             Player player = (Player) sender;
             for(Channel channel : ChannelManager.getPlayerChannels(player)){
@@ -22,8 +21,14 @@ public class SayCommand implements CommandExecutor {
                     LocalChannel lc = (LocalChannel) channel;
                     if(lc.setDefault()){
                         //Set default;
+                        if(message.length() == 0){
+                            //Oh look ma! A feedback message that's totally hacked!
+                            sender.sendMessage(ChatColor.GRAY + ":" + ChatColor.DARK_GRAY + "/s [Local Chat] is now your default channel.");
+                        }
                     }
-                    lc.broadcast(new Player[] {(Player) sender},message);
+                    if(message.length() > 0){
+                        lc.broadcast(new Player[] {(Player) sender},message);
+                    }
                     return true;
                 }
             }
