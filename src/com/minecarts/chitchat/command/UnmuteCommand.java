@@ -30,8 +30,12 @@ public class UnmuteCommand implements CommandExecutor {
         Player matchedPlayer = matches.get(0);
         PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer, "g");
         PrefixChannel announce = ChannelManager.getChannelFromPrefix(matchedPlayer, "!");
+        PrefixChannel subscriber = ChannelManager.getChannelFromPrefix(matchedPlayer, "$");
         global.canChat(true);
         announce.canChat(true);
+        if(subscriber != null){
+            subscriber.canChat(true);
+        }
         GagManager.ungag(matches.get(0));
 
         sender.sendMessage("You have unmuted " + matchedPlayer.getDisplayName() + ".");

@@ -73,13 +73,14 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
         if(channel.setDefault()){
             ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(player, channel);
-        }
-        if(args.length == 1){
-            player.sendMessage(MessageFormat.format("{0} {2}[{1}] is now your default chat channel.",
-                    channel.getPrefix(),
-                    channel.getName(),
-                    ChatColor.DARK_GRAY
-                    ));
+
+            if(args.length == 1){
+                player.sendMessage(MessageFormat.format("{0} {2}[{1}] is now your default chat channel.",
+                        channel.getPrefix(),
+                        channel.getName(),
+                        ChatColor.DARK_GRAY
+                ));
+            }
         }
         if(args.length == 2){
             String message = ChatColor.stripColor(args[1]);

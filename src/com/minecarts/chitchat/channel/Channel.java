@@ -124,7 +124,7 @@ abstract public class Channel {
     abstract protected String formatMessage(Player player, String message);
 
     public Boolean setDefault(){
-        if(!this.canChat()) return false; //Never set default for a channel they can't chat in
+        if(!this.canChat(false)) return false; //Never set default for a channel they can't chat in
         ChannelManager.setDefaultPlayerChannel(this.owningPlayer,this);
         return true;
     }
@@ -134,11 +134,16 @@ abstract public class Channel {
     }
     
     public Boolean canChat(){
+        return this.canChat(true);
+    }
+    public Boolean canChat(boolean showMessage){
         if(!this.canChat){
-            if(GagManager.isGagged(getOwner())){
-                this.display(PluginManager.config().getString("messages.CHANNEL_GAGGED"));
-            } else {
-                this.display(PluginManager.config().getString("messages.CHANNEL_NOSPEAK"));
+            if(showMessage){
+                if(GagManager.isGagged(getOwner())){
+                    this.display(PluginManager.config().getString("messages.CHANNEL_GAGGED"));
+                } else {
+                    this.display(PluginManager.config().getString("messages.CHANNEL_NOSPEAK"));
+                }
             }
         }
         return this.canChat;

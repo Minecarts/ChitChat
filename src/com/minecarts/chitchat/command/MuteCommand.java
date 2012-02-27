@@ -29,7 +29,7 @@ public class MuteCommand implements CommandExecutor {
         int durationTicks = (20 * 60) * 15; 
         if(args.length == 2){
             try{
-                durationTicks = Integer.parseInt(args[1]);
+                durationTicks = Integer.parseInt(args[1]) * 20 * 60;
             } catch (NumberFormatException e){
                 sender.sendMessage("Please specify a numerical duration in minutes.");
                 return true;
@@ -49,8 +49,12 @@ public class MuteCommand implements CommandExecutor {
         final Player matchedPlayer = matches.get(0);
         final PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer,"g");
         final PrefixChannel announcement = ChannelManager.getChannelFromPrefix(matchedPlayer,"!");
+        final PrefixChannel subscriber = ChannelManager.getChannelFromPrefix(matchedPlayer,"$");
         global.canChat(false);
         announcement.canChat(false);
+        if(subscriber != null){
+            subscriber.canChat(false);
+        }
         GagManager.gag(matchedPlayer); //Store the gag to auto gag on login
 
         Integer minutes = (durationTicks / 20 / 60);
@@ -68,6 +72,9 @@ public class MuteCommand implements CommandExecutor {
                     plugin.getLogger().log(Level.INFO,"Player mute time expired for " + global.getOwner());
                     global.canChat(true);
                     announcement.canChat(true);
+                    if(subscriber != null){
+                        subscriber.canChat(true);
+                    }
                 }
                 GagManager.ungag(matchedPlayer);
             }
