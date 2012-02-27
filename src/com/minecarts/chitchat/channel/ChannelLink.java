@@ -58,6 +58,26 @@ public class ChannelLink {
         }
     }
 
+    public void relayMessageExceptPlayer(Player exception, Player sender, String format, String... args){
+        //Used by player joins
+        for(Channel channel : this.members.values()){
+            if(channel.getOwner().equals(exception)){
+                continue;
+            }
+
+            //This is required to prevent string formatting of varargs
+            List<String> varargs = new ArrayList<String>();
+            varargs.add(channel.color().toString());
+            varargs.addAll(Arrays.asList(args));
+            String message = MessageFormat.format(format,varargs.toArray());
+
+            if(sender == null){
+                channel.display(message);
+            } else {
+                channel.displayInbound(sender, message);
+            }
+        }
+    }
     public void relayMessageExceptPlayer(Player exception, Player sender, String message){
         this.logMessage(null,message);
         for(Channel channel : this.members.values()){
