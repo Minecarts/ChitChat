@@ -17,7 +17,11 @@ import java.util.ArrayList;
 
 public class ChannelCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(args.length == 0) return false;
+        if(args.length == 0){
+            //Display a helpful message
+            sender.sendMessage("Type " + ChatColor.YELLOW + "/help" + ChatColor.WHITE +" for a list of channel commands.");
+            return true;
+        }
 
         if(args[0].equalsIgnoreCase("reload")){
             if(!sender.hasPermission("chitchat.admin.reload")) return true;
