@@ -61,6 +61,10 @@ abstract public class Channel {
         return members;
     }
     
+    public boolean hasPlayer() {
+        return this.channelLink.isPlayerInChannel(this.owningPlayer);
+    }
+    
     protected ChannelLink getLink(){
         return this.channelLink;
     }

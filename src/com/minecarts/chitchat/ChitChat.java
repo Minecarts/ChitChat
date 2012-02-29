@@ -170,17 +170,40 @@ public class ChitChat extends JavaPlugin implements Listener {
             global.setCanChat(false);
             announce.setCanChat(false);
         }
-
-        if(player.hasPermission("subscriber")){
+    }
+    
+    
+    @EventHandler
+    public void on(com.minecarts.dbpermissions.PermissionsCalculated event) {
+        if(event.getPermissible() instanceof Player) {
+            Player player = (Player) event.getPermissible();
+            
             PrefixChannel subscriber = new PermanentChannel(player, "Subscriber", "$", ChatColor.GREEN);
-            subscriber.join(true,isReload);
-            if(GagManager.isGagged(player)){
+            if(GagManager.isGagged(player)) {
                 subscriber.setCanChat(false);
             }
-        }
-        if(player.hasPermission("chitchat.admin.chat")){
+            if(player.hasPermission("subscriber")) {
+                if(!subscriber.hasPlayer()) {
+                    subscriber.join(true, true);
+                }
+            }
+            else {
+                if(subscriber.hasPlayer()) {
+                    subscriber.leave(false, false);
+                }
+            }
+            
             PrefixChannel admin = new PermanentChannel(player, "Admin", "@", ChatColor.YELLOW);
-            admin.join(true,isReload);
+            if(player.hasPermission("chitchat.admin.chat")) {
+                if(!admin.hasPlayer()) {
+                    admin.join(true, true);
+                }
+            }
+            else {
+                if(admin.hasPlayer()) {
+                    admin.leave(false, false);
+                }
+            }
         }
     }
 
