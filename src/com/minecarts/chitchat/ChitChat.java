@@ -141,6 +141,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         new Query("SELECT * FROM `player_channels` WHERE `playerName` = ? ORDER BY `channelIndex`") {
             @Override
             public void onFetch(ArrayList<HashMap> rows) {
+                ChannelManager.setJoinLocked(player,false);
                 if(rows == null || rows.size() == 0) return;
                 for(HashMap row : rows){
                     PrefixChannel channel = new PrefixChannel(player,(String)row.get("channelName"),row.get("channelIndex").toString());
@@ -155,7 +156,6 @@ public class ChitChat extends JavaPlugin implements Listener {
                             ChatColor.YELLOW,
                             ChatColor.GRAY));
                 }
-                ChannelManager.setJoinLocked(player,false);
             }
         }.fetch(player.getName());
     }
