@@ -31,10 +31,10 @@ public class UnmuteCommand implements CommandExecutor {
         PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer, "g");
         PrefixChannel announce = ChannelManager.getChannelFromPrefix(matchedPlayer, "!");
         PrefixChannel subscriber = ChannelManager.getChannelFromPrefix(matchedPlayer, "$");
-        global.canChat(true);
-        announce.canChat(true);
+        global.setCanChat(true);
+        announce.setCanChat(true);
         if(subscriber != null){
-            subscriber.canChat(true);
+            subscriber.setCanChat(true);
         }
         GagManager.ungag(matches.get(0));
 

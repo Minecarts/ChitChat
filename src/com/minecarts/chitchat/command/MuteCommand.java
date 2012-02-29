@@ -50,10 +50,10 @@ public class MuteCommand implements CommandExecutor {
         final PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer,"g");
         final PrefixChannel announcement = ChannelManager.getChannelFromPrefix(matchedPlayer,"!");
         final PrefixChannel subscriber = ChannelManager.getChannelFromPrefix(matchedPlayer,"$");
-        global.canChat(false);
-        announcement.canChat(false);
+        global.setCanChat(false);
+        announcement.setCanChat(false);
         if(subscriber != null){
-            subscriber.canChat(false);
+            subscriber.setCanChat(false);
         }
         GagManager.gag(matchedPlayer); //Store the gag to auto gag on login
 
@@ -70,10 +70,10 @@ public class MuteCommand implements CommandExecutor {
             public void run() {
                 if(matchedPlayer.isOnline()){
                     plugin.getLogger().log(Level.INFO,"Player mute time expired for " + global.getOwner());
-                    global.canChat(true);
-                    announcement.canChat(true);
+                    global.setCanChat(true);
+                    announcement.setCanChat(true);
                     if(subscriber != null){
-                        subscriber.canChat(true);
+                        subscriber.setCanChat(true);
                     }
                 }
                 GagManager.ungag(matchedPlayer);

@@ -158,7 +158,7 @@ abstract public class Channel {
         }
         return this.canChat;
     }
-    public void canChat(Boolean chatFlag){
+    public void setCanChat(Boolean chatFlag){
         this.canChat = chatFlag;
     }
 }

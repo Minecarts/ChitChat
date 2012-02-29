@@ -167,13 +167,16 @@ public class ChitChat extends JavaPlugin implements Listener {
         LocalChannel local = new LocalChannel(player); //Local auto joins on construction
 
         if(GagManager.isGagged(player)){
-            global.canChat(false);
-            announce.canChat(false);
+            global.setCanChat(false);
+            announce.setCanChat(false);
         }
 
         if(player.hasPermission("subscriber")){
             PrefixChannel subscriber = new PermanentChannel(player, "Subscriber", "$", ChatColor.GREEN);
             subscriber.join(true,isReload);
+            if(GagManager.isGagged(player)){
+                subscriber.setCanChat(false);
+            }
         }
         if(player.hasPermission("chitchat.admin.chat")){
             PrefixChannel admin = new PermanentChannel(player, "Admin", "@", ChatColor.YELLOW);
