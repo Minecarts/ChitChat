@@ -24,7 +24,7 @@ public class RewhisperCommand implements CommandExecutor {
         }
         if(!channel.target().isOnline()){
             sender.sendMessage(MessageFormat.format("{0} is no longer online.",
-                    channel.target()
+                    channel.target().getName()
             ));
             return true;
         }
