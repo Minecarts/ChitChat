@@ -16,13 +16,17 @@ import java.util.ListIterator;
 public class SpamManager {
     private static HashMap<Player, ArrayList<Long>> messageTracker = new HashMap<Player, ArrayList<Long>>();
     private static HashMap<Player, String> lastMessage = new HashMap<Player, String>();
+    private static HashMap<Player, Long> lastMessageTime = new HashMap<Player, Long>(); 
     private static HashMap<Player, ChannelLink> lastChannel = new HashMap<Player, ChannelLink>();
 
     public static Boolean isRepeatedMessage(Player player, ChannelLink link, String message){
-        if(lastChannel.get(player) == link && lastMessage.get(player).equalsIgnoreCase(message)){
+        if(lastChannel.get(player) == link 
+                && lastMessage.get(player).equalsIgnoreCase(message) 
+                && ((new Date()).getTime() - lastMessageTime.get(player)) > (PluginManager.config().getInt("spam.timeout") * 1000)){
             return true;
         }
         lastMessage.put(player,message);
+        lastMessageTime.put(player,(new Date()).getTime());
         lastChannel.put(player,link);
         return false;
     }
