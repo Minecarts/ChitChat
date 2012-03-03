@@ -46,7 +46,6 @@ public class ChitChat extends JavaPlugin implements Listener {
             getCommand("unmute").setExecutor(new UnmuteCommand());
             getCommand("announce").setExecutor(new AnnounceCommand());
             getCommand("hint").setExecutor(new HintsCommand());
-            //getCommand("who").setExecutor(new WhoCommand());
 
         //Join existing players to our default / static channels
         for(Player player : Bukkit.getOnlinePlayers()){
@@ -67,6 +66,17 @@ public class ChitChat extends JavaPlugin implements Listener {
         String[] args = event.getMessage().replaceAll(" +", " ").split(" ", 2);
         String prefix = args[0].replaceAll("/", "");
 
+        
+        //Check to see if it's the /who command to allow for ghetto hooking of /who $ for example
+        if(prefix.equalsIgnoreCase("who")){
+            PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, args[1]);
+            player.sendMessage(channel.color() + "---- Players in " +channel.getName() +" (" + channel.getPrefix() + ") -----");
+            player.sendMessage(StringUtils.join(channel.getMemberNames(player),", "));
+            event.setCancelled(true);
+            return;
+        }
+        
+        
         PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, prefix);
         if(channel == null){
             return; //Don't handle it, it's probably not a channel index
