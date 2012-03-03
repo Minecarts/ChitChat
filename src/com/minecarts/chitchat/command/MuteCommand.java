@@ -24,66 +24,66 @@ public class MuteCommand implements CommandExecutor {
     
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("chitchat.admin.mute")) return true;
-        if(args.length != 1 && args.length != 2) return false;
-        
-        int durationTicks = (20 * 60) * 15; 
-        if(args.length == 2){
-            try{
-                durationTicks = Integer.parseInt(args[1]) * 20 * 60;
-            } catch (NumberFormatException e){
-                sender.sendMessage("Please specify a numerical duration in minutes.");
-                return true;
+
+        int argCounter = 1;
+        int durationTicks = (20 * 60) * 15;
+        Boolean setTicks = false;
+        try{
+            durationTicks = Integer.parseInt(args[args.length - 1]) * 20 * 60;
+            setTicks = true;
+        } catch (NumberFormatException e){ }
+
+        for(String name : args){
+            if(argCounter++ == args.length && setTicks){ break; }
+
+            List<Player> matches = Bukkit.matchPlayer(name);
+            if(matches.size() > 1){
+                sender.sendMessage("Unable to mute " + ChatColor.YELLOW + name + ChatColor.WHITE + ". Too many players matched.");
+                continue;
             }
-        }
+            if(matches.size() < 1){
+                sender.sendMessage("Unable to mute " + ChatColor.YELLOW + name + ChatColor.WHITE + ". No online players matched.");
+                continue;
+            }
 
-        List<Player> matches = Bukkit.matchPlayer(args[0]);
-        if(matches.size() > 1){
-            sender.sendMessage("Unable to mute " + ChatColor.YELLOW + args[0] + ChatColor.WHITE + ". Too many players matched.");
-            return true;
-        }
-        if(matches.size() < 1){
-            sender.sendMessage("Unable to mute " + ChatColor.YELLOW + args[0] + ChatColor.WHITE + ". No online players matched.");
-            return true;
-        }
-        
-        final Player matchedPlayer = matches.get(0);
-        final PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer,"g");
-        final PrefixChannel announcement = ChannelManager.getChannelFromPrefix(matchedPlayer,"!");
-        final PrefixChannel subscriber = ChannelManager.getChannelFromPrefix(matchedPlayer,"$");
-        global.setCanChat(false);
-        announcement.setCanChat(false);
-        if(subscriber != null){
-            subscriber.setCanChat(false);
-        }
+            final Player matchedPlayer = matches.get(0);
+            final PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer,"g");
+            final PrefixChannel announcement = ChannelManager.getChannelFromPrefix(matchedPlayer,"!");
+            final PrefixChannel subscriber = ChannelManager.getChannelFromPrefix(matchedPlayer,"$");
+            global.setCanChat(false);
+            announcement.setCanChat(false);
+            if(subscriber != null){
+                subscriber.setCanChat(false);
+            }
 
-        if(!GagManager.isGagged(matchedPlayer)){
-            matchedPlayer.sendMessage(PluginManager.config().getString("messages.PLAYER_GAGGED"));
-        }
+            if(!GagManager.isGagged(matchedPlayer)){
+                matchedPlayer.sendMessage(PluginManager.config().getString("messages.PLAYER_GAGGED"));
+            }
 
-        GagManager.gag(matchedPlayer); //Store the gag to auto gag on login
+            GagManager.gag(matchedPlayer); //Store the gag to auto gag on login
 
-        Integer minutes = (durationTicks / 20 / 60);
-        sender.sendMessage("You have muted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + " for " + minutes + " minutes");
-        for(Player p : Bukkit.getOnlinePlayers()){
-            if(!p.hasPermission("chitchat.admin.mute")) continue;
-            if(p.equals(sender)) continue;
-            p.sendMessage(sender.getName() + " muted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + " for " + minutes + " minutes.");
-        }
-        
-        Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin,new Runnable() {
-            public void run() {
-                if(matchedPlayer.isOnline()){
-                    plugin.getLogger().log(Level.INFO,"Player mute time expired for " + global.getOwner());
-                    global.setCanChat(true);
-                    announcement.setCanChat(true);
-                    if(subscriber != null){
-                        subscriber.setCanChat(true);
+            Integer minutes = (durationTicks / 20 / 60);
+            sender.sendMessage("You have muted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + " for " + minutes + " minutes");
+            for(Player p : Bukkit.getOnlinePlayers()){
+                if(!p.hasPermission("chitchat.admin.mute")) continue;
+                if(p.equals(sender)) continue;
+                p.sendMessage(sender.getName() + " muted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + " for " + minutes + " minutes.");
+            }
+
+            Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin,new Runnable() {
+                public void run() {
+                    if(matchedPlayer.isOnline()){
+                        plugin.getLogger().log(Level.INFO,"Player mute time expired for " + global.getOwner());
+                        global.setCanChat(true);
+                        announcement.setCanChat(true);
+                        if(subscriber != null){
+                            subscriber.setCanChat(true);
+                        }
                     }
+                    GagManager.ungag(matchedPlayer);
                 }
-                GagManager.ungag(matchedPlayer);
-            }
-        },durationTicks);
-        
+            },durationTicks);
+        }
         return true;
     }
 }

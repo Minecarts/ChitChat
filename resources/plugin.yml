@@ -39,7 +39,7 @@ commands:
     mute:
         aliases: [gag]
         description: Remove the ability for a player to send messages to global channels
-        usage: /<command> [player] [durration]
+        usage: /<command> [player, player, ...] [durration in minutes]
     unmute:
         aliases: [ungag]
         description: Ungag a player who has been previously gagged
