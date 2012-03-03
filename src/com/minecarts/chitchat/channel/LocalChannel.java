@@ -35,26 +35,29 @@ public class LocalChannel extends Channel{
         Double range = player.getLocation().distance(getOwner().getLocation());
         if(range > PluginManager.config().getInt("channel.say.range.oor")) return null; //Null messages wont be displayed
 
-        ChatColor prefixColor = ChatColor.DARK_GRAY;
-        if(isDefault()){
-            prefixColor = ChatColor.GRAY;
-        }
-
-        ChatColor color = ChatColor.WHITE;
-        if(range > PluginManager.config().getInt("channel.say.range.dark")) color = ChatColor.DARK_GRAY;
-        else if(range > PluginManager.config().getInt("channel.say.range.gray")) color = ChatColor.GRAY;
+        this.color(ChatColor.WHITE);
+        if(range > PluginManager.config().getInt("channel.say.range.dark")) this.color(ChatColor.DARK_GRAY);
+        else if(range > PluginManager.config().getInt("channel.say.range.gray")) this.color(ChatColor.GRAY);
 
         String rangeText = "";
         if(getOwner().hasPermission("chitchat.local.range")){
             rangeText = "." + Math.round(range) + "";
         }
 
-        return MessageFormat.format("{3}/s{2}{4} <{0}{4}> {1}",
+        return MessageFormat.format("{3}{2}{4} <{0}{4}> {1}",
                 player.getDisplayName(), //0
                 message, //1
                 rangeText, //2
-                prefixColor, //3
-                color //4
+                getPrefix(), //3
+                this.color() //4
+        );
+    }
+
+    private String getPrefix(){
+        return MessageFormat.format("{0}/{1}{2}",
+                (isDefault() ? ChatColor.GRAY + ":" + ChatColor.DARK_GRAY : ChatColor.DARK_GRAY),
+                "s",
+                this.color()
         );
     }
 }
