@@ -22,7 +22,7 @@ public class SpamManager {
     public static Boolean isRepeatedMessage(Player player, ChannelLink link, String message){
         if(lastChannel.get(player) == link 
                 && lastMessage.get(player).equalsIgnoreCase(message) 
-                && ((new Date()).getTime() - lastMessageTime.get(player)) > (PluginManager.config().getInt("spam.timeout") * 1000)){
+                && ((new Date()).getTime() - lastMessageTime.get(player)) < (PluginManager.config().getInt("spam.timeout") * 1000)){
             return true;
         }
         lastMessage.put(player,message);
