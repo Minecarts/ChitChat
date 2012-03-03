@@ -69,7 +69,9 @@ public class ChitChat extends JavaPlugin implements Listener {
         
         //Check to see if it's the /who command to allow for ghetto hooking of /who $ for example
         if(prefix.equalsIgnoreCase("who")){
+            if(args.length != 2) return; //Only hook if it's /who #
             PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, args[1]);
+            if(channel == null) return; //If no channel, let /who plugin handle it
             player.sendMessage(channel.color() + "---- Players in " +channel.getName() +" (" + channel.getPrefix() + ") -----");
             player.sendMessage(StringUtils.join(channel.getMemberNames(player),", "));
             event.setCancelled(true);
