@@ -1,41 +1,61 @@
 package com.minecarts.chitchat.manager;
 
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Date;
+
 import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.WhisperChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 
 public class WhisperManager {
-    private static HashMap<Player, WhisperChannel> lastSentWhisperTracker = new HashMap<Player, WhisperChannel>();
-    private static HashMap<Player, WhisperChannel> lastReceivedWhisperTracker = new HashMap<Player, WhisperChannel>();
+    private static Map<Player, WhisperChannel> lastSent = new HashMap<Player, WhisperChannel>();
+    private static Map<Player, DatedWhisper> lastReceived = new HashMap<Player, DatedWhisper>();
     
     public static void setLastSentWhisper(Player player, WhisperChannel channel){
-        lastSentWhisperTracker.put(player,channel);
+        lastSent.put(player,channel);
     }
     public static WhisperChannel getLastSentWhisper(Player player){
-        return lastSentWhisperTracker.get(player);
+        return lastSent.get(player);
     }
 
     public static void setLastReceivedWhisper(final Player player, final WhisperChannel channel){
-        if(lastReceivedWhisperTracker.get(player) == null){
-            //No delay if there is no last whisper
-            lastReceivedWhisperTracker.put(player,channel);
-        } else {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(
-                    (ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat"),
-                    new Runnable() {
-                        public void run() {
-                            lastReceivedWhisperTracker.put(player,channel);
-                        }
-                    },
-                    20 * PluginManager.config().getInt("channel.whisper.interrupt_timeout")
-            );
+        DatedWhisper lastWhisper = lastReceived.get(player);
+        
+        if(lastWhisper == null
+                || lastWhisper.getWhisper().target().equals(channel.target())
+                || lastWhisper.elapsed() > 1000 * PluginManager.config().getInt("channel.whisper.interrupt_timeout")) {
+            
+            lastReceived.put(player, new DatedWhisper(channel));
+            
+        }
+    }
+    public static WhisperChannel getLastReceivedWhisper(Player player) {
+        DatedWhisper lastWhisper = lastReceived.get(player);
+        return lastWhisper == null ? null : lastWhisper.getWhisper();
+    }
+    
+    
+    static class DatedWhisper {
+        private final WhisperChannel whisper;
+        private final Date date;
+        
+        public DatedWhisper(WhisperChannel whisper) {
+            this(whisper, new Date());
+        }
+        public DatedWhisper(WhisperChannel whisper, Date date) {
+            this.whisper = whisper;
+            this.date = date;
         }
         
+        public WhisperChannel getWhisper() {
+            return this.whisper;
+        }
+        public long elapsed() {
+            return new Date().getTime() - this.date.getTime();
+        }
     }
-    public static WhisperChannel getLastReceivedWhisper(Player player){
-        return lastReceivedWhisperTracker.get(player);
-    }
+    
 }
