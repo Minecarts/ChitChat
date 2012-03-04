@@ -34,14 +34,14 @@ public class ChitChat extends JavaPlugin implements Listener {
         dbq = (DBQuery) getServer().getPluginManager().getPlugin("DBQuery");
         getServer().getPluginManager().registerEvents(this,this);
         //Register our commands
-            getCommand("join").setExecutor(new JoinCommand());
-            getCommand("leave").setExecutor(new LeaveCommand());
+            getCommand("join").setExecutor(new JoinCommand(this));
+            getCommand("leave").setExecutor(new LeaveCommand(this));
             getCommand("say").setExecutor(new SayCommand());
             getCommand("whisper").setExecutor(new WhisperCommand());
             getCommand("channel").setExecutor(new ChannelCommand());
             getCommand("rewhisper").setExecutor(new RewhisperCommand());
             getCommand("reply").setExecutor(new ReplyCommand());
-            getCommand("ignore").setExecutor(new IgnoreCommand());
+            getCommand("ignore").setExecutor(new IgnoreCommand(this));
             getCommand("mute").setExecutor(new MuteCommand(this));
             getCommand("unmute").setExecutor(new UnmuteCommand());
             getCommand("announce").setExecutor(new AnnounceCommand());
@@ -84,7 +84,7 @@ public class ChitChat extends JavaPlugin implements Listener {
             return; //Don't handle it, it's probably not a channel index
         }
         if(channel.setDefault()){
-            ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbUpdateChannel(player, channel);
+            dbUpdateChannel(player, channel);
 
             if(args.length == 1){
                 player.sendMessage(MessageFormat.format("{0} {2}[{1}] is now your default chat channel.",

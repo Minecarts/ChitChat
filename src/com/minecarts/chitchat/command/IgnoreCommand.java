@@ -14,6 +14,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 public class IgnoreCommand implements CommandExecutor {
+    private ChitChat plugin;
+    
+    public IgnoreCommand(ChitChat plugin){
+        this.plugin = plugin;
+    }
+    
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)){
             sender.sendMessage("Ignoring is not supported by the console.");
@@ -29,40 +35,43 @@ public class IgnoreCommand implements CommandExecutor {
             return true;
         }
         
-        
-        List<Player> matches = Bukkit.matchPlayer(args[0]);
 
         String ignoreText = (label.equals("unignore")) ? "unignore" : "ignore";
-        
-        if(matches.size() > 1){
-            sender.sendMessage("Unable to " + ignoreText + " " + ChatColor.YELLOW + args[0] + ChatColor.WHITE + ". Too many players matched.");
-            return true;
-        }
-        if(matches.size() < 1){
-            sender.sendMessage("Unable to " + ignoreText + " " + ChatColor.YELLOW + args[0] + ChatColor.WHITE + ". No online players matched.");
-            return true;
-        }
 
-        Player foundPlayer = matches.get(0);
+        for(String name : args) {
+            List<Player> matches = Bukkit.matchPlayer(name);
 
-        if(IgnoreManager.isIgnoring(player,foundPlayer.getName())){
-            IgnoreManager.unignorePlayer(player,foundPlayer.getName());
-            sender.sendMessage("You have " + ChatColor.YELLOW + "unignored " + ChatColor.WHITE + foundPlayer.getDisplayName() + ChatColor.WHITE + ".");
-            ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbRemoveIgnore(player,foundPlayer.getName());
-            return true;
-        } else {
+            if(matches.size() > 1){
+                sender.sendMessage("Unable to " + ignoreText + " " + ChatColor.YELLOW + name + ChatColor.WHITE + ". Too many players matched.");
+                continue;
+            }
+            if(matches.size() < 1){
+                sender.sendMessage("Unable to " + ignoreText + " " + ChatColor.YELLOW + name + ChatColor.WHITE + ". No online players matched.");
+                continue;
+            }
+
+            Player foundPlayer = matches.get(0);
+
+            if(IgnoreManager.isIgnoring(player,foundPlayer.getName())){
+                IgnoreManager.unignorePlayer(player,foundPlayer.getName());
+                sender.sendMessage("You have " + ChatColor.YELLOW + "unignored " + ChatColor.WHITE + foundPlayer.getDisplayName() + ChatColor.WHITE + ".");
+                plugin.dbRemoveIgnore(player,foundPlayer.getName());
+                continue;
+            }
             if(label.equalsIgnoreCase("unignore")){
                 sender.sendMessage("You are not currently ignoring " + foundPlayer.getDisplayName());
-                return true;
+                continue;
             }
             if(foundPlayer.hasPermission("chitchat.ignore.immunity")){
                 sender.sendMessage("You can not ignore an administrator.");
-                return true;
+                continue;
             }
+            
             IgnoreManager.ignorePlayer(player,foundPlayer.getName());
             sender.sendMessage("You have " + ChatColor.YELLOW + "ignored " + ChatColor.WHITE + foundPlayer.getDisplayName() + ChatColor.WHITE + ".");
-            ((ChitChat)Bukkit.getPluginManager().getPlugin("ChitChat")).dbAddIgnore(player,foundPlayer.getName());
-            return true;
+            plugin.dbAddIgnore(player,foundPlayer.getName());
         }
+        
+        return true;
     }
 }

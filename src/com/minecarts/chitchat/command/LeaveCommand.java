@@ -11,6 +11,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class LeaveCommand implements CommandExecutor {
+    private ChitChat plugin;
+    
+    public LeaveCommand(ChitChat plugin){
+        this.plugin = plugin;
+    }
+    
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         //Leave a channel
         if(args.length != 1) return false;
@@ -33,7 +39,7 @@ public class LeaveCommand implements CommandExecutor {
         }
         if(channel.leave(false,false)){
             //Only remove the channel from the DB if they successfully left
-            ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbRemoveChannel((Player)sender, channel);
+            plugin.dbRemoveChannel((Player)sender, channel);
         }
         return true;
     }
