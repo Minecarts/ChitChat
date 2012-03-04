@@ -4,7 +4,6 @@ import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.MuteManager;
-import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,12 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class MuteCommand implements CommandExecutor {
-    private ChitChat plugin;
-    
-    public MuteCommand(ChitChat plugin){
-        this.plugin = plugin;
-    }
-    
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("chitchat.admin.mute")) return true;
 
@@ -49,7 +42,7 @@ public class MuteCommand implements CommandExecutor {
             Player matchedPlayer = matches.get(0);
 
             if(!MuteManager.isMuted(matchedPlayer)){
-                matchedPlayer.sendMessage(PluginManager.config().getString("messages.PLAYER_MUTED"));
+                matchedPlayer.sendMessage(ChitChat.getPlugin().getConfig().getString("messages.PLAYER_MUTED"));
             }
 
             MuteManager.mute(matchedPlayer, (long) (1000 * 60 * minutes)); //Store the gag to auto gag on login

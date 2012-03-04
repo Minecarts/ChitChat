@@ -14,12 +14,6 @@ import java.util.List;
 
 
 public class JoinCommand implements CommandExecutor {
-    private ChitChat plugin;
-    
-    public JoinCommand(ChitChat plugin){
-        this.plugin = plugin;
-    }
-
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         switch(args.length){
             case 1: //Join a channel
@@ -49,12 +43,13 @@ public class JoinCommand implements CommandExecutor {
 
                 PrefixChannel channel = new PrefixChannel(player,args[0]);
                 if(channel.join(false,false)){
-                    plugin.dbUpdateChannel(player, channel);
+                    ChitChat.getPlugin().dbUpdateChannel(player, channel);
                     if(channel.setDefault()){
-                        plugin.dbSetDefaultChannel(player,channel);
+                        ChitChat.getPlugin().dbSetDefaultChannel(player,channel);
                     }
                 }
                 return true;
+                
             case 2: //Force join a player
                 if(!sender.hasPermission("chitchat.admin.force_join")) return false;
                 List<Player> players = Bukkit.matchPlayer(args[0]);
@@ -72,11 +67,12 @@ public class JoinCommand implements CommandExecutor {
                 PrefixChannel forceChannel = new PrefixChannel(targetPlayer,args[1]);
                 forceChannel.join(false,false);
                 forceChannel.setDefault();
-                plugin.dbUpdateChannel(targetPlayer, forceChannel);
-                plugin.dbSetDefaultChannel(targetPlayer,forceChannel);
+                ChitChat.getPlugin().dbUpdateChannel(targetPlayer, forceChannel);
+                ChitChat.getPlugin().dbSetDefaultChannel(targetPlayer,forceChannel);
 
                 sender.sendMessage("Force joined " + targetPlayer.getDisplayName() + " to " + args[1]);
                 return true;
+                
             default:
                 return false;
         }

@@ -26,7 +26,7 @@ public class WhisperManager {
         
         if(lastWhisper == null
                 || lastWhisper.getWhisper().target().equals(channel.target())
-                || lastWhisper.elapsed() > 1000 * PluginManager.config().getInt("channel.whisper.interrupt_timeout")) {
+                || lastWhisper.elapsed() > 1000 * ChitChat.getPlugin().getConfig().getInt("channel.whisper.interrupt_timeout")) {
             
             lastReceived.put(player, new DatedWhisper(channel));
             

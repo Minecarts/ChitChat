@@ -1,9 +1,9 @@
 package com.minecarts.chitchat.command;
 
+import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.Channel;
 import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
-import com.minecarts.chitchat.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,7 +25,7 @@ public class ChannelCommand implements CommandExecutor {
 
         if(args[0].equalsIgnoreCase("reload")){
             if(!sender.hasPermission("chitchat.admin.reload")) return true;
-            PluginManager.plugin().reloadConfig();
+            ChitChat.getPlugin().reloadConfig();
             sender.sendMessage("ChitChat config reloaded.");
             return true;
         }

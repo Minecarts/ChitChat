@@ -3,7 +3,6 @@ package com.minecarts.chitchat.channel;
 import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.LanguageManager;
-import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,7 +18,7 @@ public class PrefixChannel extends Channel{
     private ArrayList<ChatColor> colors = new ArrayList<ChatColor>();
 
     private void getColorsFromConfig(){
-        List<String> colorNames = PluginManager.config().getStringList("colors");
+        List<String> colorNames = ChitChat.getPlugin().getConfig().getStringList("colors");
         for(String color : colorNames){
             colors.add(ChatColor.valueOf(color));
         }
@@ -45,7 +44,7 @@ public class PrefixChannel extends Channel{
         getColorsFromConfig();
 
         final ArrayList<String> usedPrefixes = ChannelManager.getUsedPrefix(player);
-        for(Integer i = 1; i < PluginManager.config().getInt("channel.prefix.max_channels"); i++){
+        for(Integer i = 1; i < ChitChat.getPlugin().getConfig().getInt("channel.prefix.max_channels"); i++){
             if(!usedPrefixes.contains(i.toString())){
                 this.prefix = i.toString();
                 shouldSave = true;

@@ -1,9 +1,9 @@
 package com.minecarts.chitchat.channel;
 
+import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.MuteManager;
 import com.minecarts.chitchat.manager.LanguageManager;
-import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -154,9 +154,9 @@ abstract public class Channel {
         if(!this.canChat){
             if(showMessage){
                 if(MuteManager.isMuted(getOwner())){
-                    this.display(PluginManager.config().getString("messages.CHANNEL_MUTED"));
+                    this.display(ChitChat.getPlugin().getConfig().getString("messages.CHANNEL_MUTED"));
                 } else {
-                    this.display(PluginManager.config().getString("messages.CHANNEL_NOSPEAK"));
+                    this.display(ChitChat.getPlugin().getConfig().getString("messages.CHANNEL_NOSPEAK"));
                 }
             }
         }

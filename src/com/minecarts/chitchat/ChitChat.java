@@ -6,7 +6,6 @@ import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.command.*;
 import com.minecarts.chitchat.manager.MuteManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
-import com.minecarts.chitchat.manager.PluginManager;
 import com.minecarts.dbquery.DBQuery;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -28,21 +27,29 @@ import java.util.logging.Level;
 public class ChitChat extends JavaPlugin implements Listener {
     private DBQuery dbq;
     private final Random random = new Random();
-
+    
+    private static ChitChat plugin;
+    static public ChitChat getPlugin() {
+        return plugin;
+    }
+    
+    @Override
     public void onEnable(){
-        PluginManager.plugin(this);
+        plugin = this;
+        
         dbq = (DBQuery) getServer().getPluginManager().getPlugin("DBQuery");
         getServer().getPluginManager().registerEvents(this,this);
+        
         //Register our commands
-            getCommand("join").setExecutor(new JoinCommand(this));
-            getCommand("leave").setExecutor(new LeaveCommand(this));
+            getCommand("join").setExecutor(new JoinCommand());
+            getCommand("leave").setExecutor(new LeaveCommand());
             getCommand("say").setExecutor(new SayCommand());
             getCommand("whisper").setExecutor(new WhisperCommand());
             getCommand("channel").setExecutor(new ChannelCommand());
             getCommand("rewhisper").setExecutor(new RewhisperCommand());
             getCommand("reply").setExecutor(new ReplyCommand());
-            getCommand("ignore").setExecutor(new IgnoreCommand(this));
-            getCommand("mute").setExecutor(new MuteCommand(this));
+            getCommand("ignore").setExecutor(new IgnoreCommand());
+            getCommand("mute").setExecutor(new MuteCommand());
             getCommand("unmute").setExecutor(new UnmuteCommand());
             getCommand("announce").setExecutor(new AnnounceCommand());
             getCommand("hint").setExecutor(new HintsCommand());
@@ -56,6 +63,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
 
     }
+    
 
     @EventHandler(priority = EventPriority.LOW) //Listen on low for /! worldedit cmd workaround :(
     public void onPlayerCommand(PlayerCommandPreprocessEvent event){
@@ -220,7 +228,7 @@ public class ChitChat extends JavaPlugin implements Listener {
             }
         }.affected(
                 player.getName(),
-                PluginManager.config().getString("spam.ban_message"),
+                getConfig().getString("spam.ban_message"),
                 "plugin.ChitChat",
                 15
         );

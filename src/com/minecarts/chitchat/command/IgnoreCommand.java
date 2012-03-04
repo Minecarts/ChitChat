@@ -14,12 +14,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 public class IgnoreCommand implements CommandExecutor {
-    private ChitChat plugin;
-    
-    public IgnoreCommand(ChitChat plugin){
-        this.plugin = plugin;
-    }
-    
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)){
             sender.sendMessage("Ignoring is not supported by the console.");
@@ -55,7 +49,7 @@ public class IgnoreCommand implements CommandExecutor {
             if(IgnoreManager.isIgnoring(player,foundPlayer.getName())){
                 IgnoreManager.unignorePlayer(player,foundPlayer.getName());
                 sender.sendMessage("You have " + ChatColor.YELLOW + "unignored " + ChatColor.WHITE + foundPlayer.getDisplayName() + ChatColor.WHITE + ".");
-                plugin.dbRemoveIgnore(player,foundPlayer.getName());
+                ChitChat.getPlugin().dbRemoveIgnore(player,foundPlayer.getName());
                 continue;
             }
             if(label.equalsIgnoreCase("unignore")){
@@ -69,7 +63,7 @@ public class IgnoreCommand implements CommandExecutor {
             
             IgnoreManager.ignorePlayer(player,foundPlayer.getName());
             sender.sendMessage("You have " + ChatColor.YELLOW + "ignored " + ChatColor.WHITE + foundPlayer.getDisplayName() + ChatColor.WHITE + ".");
-            plugin.dbAddIgnore(player,foundPlayer.getName());
+            ChitChat.getPlugin().dbAddIgnore(player,foundPlayer.getName());
         }
         
         return true;

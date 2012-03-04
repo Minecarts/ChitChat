@@ -22,7 +22,7 @@ public class SpamManager {
     public static Boolean isRepeatedMessage(Player player, ChannelLink link, String message){
         if(lastChannel.get(player) == link 
                 && lastMessage.get(player).equalsIgnoreCase(message) 
-                && ((new Date()).getTime() - lastMessageTime.get(player)) < (PluginManager.config().getInt("spam.timeout") * 1000)){
+                && ((new Date()).getTime() - lastMessageTime.get(player)) < (ChitChat.getPlugin().getConfig().getInt("spam.timeout") * 1000)){
             return true;
         }
         lastMessage.put(player,message);
@@ -45,7 +45,7 @@ public class SpamManager {
         while(itr.hasPrevious()) {
             Long checkTime = itr.previous();
             Long elapsedTime = messageTime - checkTime;
-            if(elapsedTime > (PluginManager.config().getInt("spam.timeout") * 1000)){
+            if(elapsedTime > (ChitChat.getPlugin().getConfig().getInt("spam.timeout") * 1000)){
                 if(itr.previousIndex() >= 0) {
                     //Why +2? Not sure, becuase previousIndex off by 1, and this is a count not a index? investigate this someday.
                     //  could be a bug in NormalizedDrops if this is the case
@@ -54,10 +54,10 @@ public class SpamManager {
                 break;
             }
         }
-        if(timestampHistory.size() > PluginManager.config().getInt("spam.quantity")){
+        if(timestampHistory.size() > ChitChat.getPlugin().getConfig().getInt("spam.quantity")){
         //Spamming
-            ((ChitChat) Bukkit.getPluginManager().getPlugin("ChitChat")).dbInsertBan(player);
-            player.kickPlayer(PluginManager.config().getString("spam.ban_message"));
+            ChitChat.getPlugin().dbInsertBan(player);
+            player.kickPlayer(ChitChat.getPlugin().getConfig().getString("spam.ban_message"));
         }
         messageTracker.put(player,timestampHistory);
     }

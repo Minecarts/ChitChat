@@ -1,6 +1,6 @@
 package com.minecarts.chitchat.channel;
 
-import com.minecarts.chitchat.manager.PluginManager;
+import com.minecarts.chitchat.ChitChat;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -33,11 +33,11 @@ public class LocalChannel extends Channel{
     protected String formatMessage(Player player, String message){
         if(player.getWorld() != getOwner().getWorld()) return null;
         Double range = player.getLocation().distance(getOwner().getLocation());
-        if(range > PluginManager.config().getInt("channel.say.range.oor")) return null; //Null messages wont be displayed
+        if(range > ChitChat.getPlugin().getConfig().getInt("channel.say.range.oor")) return null; //Null messages wont be displayed
 
         this.color(ChatColor.WHITE);
-        if(range > PluginManager.config().getInt("channel.say.range.dark")) this.color(ChatColor.DARK_GRAY);
-        else if(range > PluginManager.config().getInt("channel.say.range.gray")) this.color(ChatColor.GRAY);
+        if(range > ChitChat.getPlugin().getConfig().getInt("channel.say.range.dark")) this.color(ChatColor.DARK_GRAY);
+        else if(range > ChitChat.getPlugin().getConfig().getInt("channel.say.range.gray")) this.color(ChatColor.GRAY);
 
         String rangeText = "";
         if(getOwner().hasPermission("chitchat.local.range")){
