@@ -1,10 +1,11 @@
 package com.minecarts.chitchat.command;
 
+import org.apache.commons.lang.StringUtils;
 
 import com.minecarts.chitchat.channel.AnnouncementChannel;
 import com.minecarts.chitchat.channel.ChannelLink;
 import com.minecarts.chitchat.manager.ChannelManager;
-import helper.StringHelper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,7 +16,7 @@ public class AnnounceCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(args.length == 0) return false;
         
-        String message = StringHelper.join(args, 0);
+        String message = StringUtils.join(args, " ");
         ChannelLink link = ChannelManager.getOrCreateChannelLink("Announcement");
         link.relayMessage(new Player[]{},ChatColor.YELLOW + message);
         return true;

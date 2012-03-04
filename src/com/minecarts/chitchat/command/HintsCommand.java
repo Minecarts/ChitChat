@@ -1,9 +1,11 @@
 package com.minecarts.chitchat.command;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.WhisperChannel;
 import com.minecarts.chitchat.manager.IgnoreManager;
-import helper.StringHelper;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,8 +18,10 @@ import java.util.List;
 public class HintsCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("chitchat.admin.hint")) return false;
-        String message = StringHelper.join(args, 1);
-        if(message.length() == 0){ return false; }
+        
+        String message = StringUtils.join(args, " ", 1, args.length);
+        if(message.length() == 0) return false;
+        
         List<Player> playerMatches = Bukkit.matchPlayer(args[0]);
 
         int numMatches = playerMatches.size();

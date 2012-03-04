@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import helper.StringHelper;
+import org.apache.commons.lang.StringUtils;
 
 public class IgnoreCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -25,7 +25,7 @@ public class IgnoreCommand implements CommandExecutor {
         if(args.length == 0 || args[0].equalsIgnoreCase("list")) {
             String[] names = IgnoreManager.getIgnoreList(player);
             if(names.length == 0) return false;
-            player.sendMessage("You are ignoring: " + StringHelper.join(names, ", "));
+            player.sendMessage("You are ignoring: " + StringUtils.join(names, ", "));
             return true;
         }
         

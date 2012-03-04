@@ -1,9 +1,11 @@
 package com.minecarts.chitchat.command;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.minecarts.chitchat.channel.Channel;
 import com.minecarts.chitchat.channel.LocalChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
-import helper.StringHelper;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -13,7 +15,8 @@ import org.bukkit.entity.Player;
 
 public class SayCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        String message = StringHelper.join(args, 0);
+        String message = StringUtils.join(args, " ");
+        
         if(sender instanceof Player){
             Player player = (Player) sender;
             for(Channel channel : ChannelManager.getPlayerChannels(player)){
