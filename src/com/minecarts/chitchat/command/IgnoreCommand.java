@@ -9,17 +9,26 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+
+import helper.StringHelper;
 
 public class IgnoreCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(args.length != 1) return false;
         if(!(sender instanceof Player)){
             sender.sendMessage("Ignoring is not supported by the console.");
             return true;
         }
+        Player player = (Player) sender;
+        
+        
+        if(args.length == 0 || args[0].equalsIgnoreCase("list")) {
+            String[] names = IgnoreManager.getIgnoreList(player);
+            if(names.length == 0) return false;
+            player.sendMessage("You are ignoring: " + StringHelper.join(names, ", "));
+            return true;
+        }
+        
         
         List<Player> matches = Bukkit.matchPlayer(args[0]);
 
@@ -34,7 +43,6 @@ public class IgnoreCommand implements CommandExecutor {
             return true;
         }
 
-        Player player = (Player)sender;
         Player foundPlayer = matches.get(0);
 
         if(IgnoreManager.isIgnoring(player,foundPlayer.getName())){
