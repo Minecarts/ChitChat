@@ -1,7 +1,7 @@
 package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
-import com.minecarts.chitchat.manager.GagManager;
+import com.minecarts.chitchat.manager.MuteManager;
 import com.minecarts.chitchat.manager.LanguageManager;
 import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.ChatColor;
@@ -153,8 +153,8 @@ abstract public class Channel {
     public Boolean canChat(boolean showMessage){
         if(!this.canChat){
             if(showMessage){
-                if(GagManager.isGagged(getOwner())){
-                    this.display(PluginManager.config().getString("messages.CHANNEL_GAGGED"));
+                if(MuteManager.isMuted(getOwner())){
+                    this.display(PluginManager.config().getString("messages.CHANNEL_MUTED"));
                 } else {
                     this.display(PluginManager.config().getString("messages.CHANNEL_NOSPEAK"));
                 }

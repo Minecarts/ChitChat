@@ -4,7 +4,7 @@ import com.minecarts.chitchat.channel.*;
 import com.minecarts.chitchat.event.ChannelMessage;
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.command.*;
-import com.minecarts.chitchat.manager.GagManager;
+import com.minecarts.chitchat.manager.MuteManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
 import com.minecarts.chitchat.manager.PluginManager;
 import com.minecarts.dbquery.DBQuery;
@@ -177,11 +177,6 @@ public class ChitChat extends JavaPlugin implements Listener {
         PrefixChannel announce = new AnnouncementChannel(player);
         announce.join(true,true);
         LocalChannel local = new LocalChannel(player); //Local auto joins on construction
-
-        if(GagManager.isGagged(player)){
-            global.setCanChat(false);
-            announce.setCanChat(false);
-        }
     }
     
     
@@ -191,9 +186,6 @@ public class ChitChat extends JavaPlugin implements Listener {
             Player player = (Player) event.getPermissible();
             
             PrefixChannel subscriber = new PermanentChannel(player, "Subscriber", "$", ChatColor.GREEN);
-            if(GagManager.isGagged(player)) {
-                subscriber.setCanChat(false);
-            }
             if(player.hasPermission("subscriber")) {
                 if(!subscriber.hasPlayer()) {
                     subscriber.join(true, true);

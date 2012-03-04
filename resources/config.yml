@@ -8,9 +8,9 @@ colors:
     - GOLD
 
 messages:
-    CHANNEL_GAGGED: "You have been muted and can not chat in this public channel. Use /join ChannelName to join your own private channel."
+    CHANNEL_MUTED: "You have been muted and can not chat in this public channel. Use /join ChannelName to join your own private channel."
     CHANNEL_NOSPEAK: "You do not have permissions to chat in this channel."
-    PLAYER_GAGGED: "You have lost your privilege to speak in global chat channels. This can happen with excessive vular language, ALL CAPS, or too much chatter between you and another player. Please consider using local chat or a custom chat channel. Type /help or visit Minecarts.com for a detailed list of commands and instructions."
+    PLAYER_MUTED: "You have lost your privilege to speak in global chat channels. This can happen with excessive vular language, ALL CAPS, or too much chatter between you and another player. Please consider using local chat or a custom chat channel. Type /help or visit Minecarts.com for a detailed list of commands and instructions."
 channel:
     say:
         range:

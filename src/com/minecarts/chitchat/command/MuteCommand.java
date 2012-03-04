@@ -3,7 +3,7 @@ package com.minecarts.chitchat.command;
 import com.minecarts.chitchat.ChitChat;
 import com.minecarts.chitchat.channel.PrefixChannel;
 import com.minecarts.chitchat.manager.ChannelManager;
-import com.minecarts.chitchat.manager.GagManager;
+import com.minecarts.chitchat.manager.MuteManager;
 import com.minecarts.chitchat.manager.PluginManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,16 +25,16 @@ public class MuteCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("chitchat.admin.mute")) return true;
 
-        int argCounter = 1;
-        int durationTicks = (20 * 60) * 15;
-        Boolean setTicks = false;
+        double minutes = 15;
         try{
-            durationTicks = Integer.parseInt(args[args.length - 1]) * 20 * 60;
-            setTicks = true;
-        } catch (NumberFormatException e){ }
+            minutes = Double.parseDouble(args[0]);
+            args[0] = null;
+        } catch (NumberFormatException e) {
+            // first arg not a number?
+        }
 
-        for(String name : args){
-            if(argCounter++ == args.length && setTicks){ break; }
+        for(String name : args) {
+            if(name == null) continue;
 
             List<Player> matches = Bukkit.matchPlayer(name);
             if(matches.size() > 1){
@@ -46,44 +46,21 @@ public class MuteCommand implements CommandExecutor {
                 continue;
             }
 
-            final Player matchedPlayer = matches.get(0);
-            final PrefixChannel global = ChannelManager.getChannelFromPrefix(matchedPlayer,"g");
-            final PrefixChannel announcement = ChannelManager.getChannelFromPrefix(matchedPlayer,"!");
-            final PrefixChannel subscriber = ChannelManager.getChannelFromPrefix(matchedPlayer,"$");
-            global.setCanChat(false);
-            announcement.setCanChat(false);
-            if(subscriber != null){
-                subscriber.setCanChat(false);
+            Player matchedPlayer = matches.get(0);
+
+            if(!MuteManager.isMuted(matchedPlayer)){
+                matchedPlayer.sendMessage(PluginManager.config().getString("messages.PLAYER_MUTED"));
             }
 
-            if(!GagManager.isGagged(matchedPlayer)){
-                matchedPlayer.sendMessage(PluginManager.config().getString("messages.PLAYER_GAGGED"));
-            }
-
-            GagManager.gag(matchedPlayer); //Store the gag to auto gag on login
-
-            Integer minutes = (durationTicks / 20 / 60);
-            sender.sendMessage("You have muted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + " for " + minutes + " minutes");
+            MuteManager.mute(matchedPlayer, (long) (1000 * 60 * minutes)); //Store the gag to auto gag on login
+            
             for(Player p : Bukkit.getOnlinePlayers()){
-                if(!p.hasPermission("chitchat.admin.mute")) continue;
-                if(p.equals(sender)) continue;
-                p.sendMessage(sender.getName() + " muted " + matchedPlayer.getDisplayName() + ChatColor.WHITE + " for " + minutes + " minutes.");
-            }
-
-            Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin,new Runnable() {
-                public void run() {
-                    if(matchedPlayer.isOnline()){
-                        plugin.getLogger().log(Level.INFO,"Player mute time expired for " + global.getOwner());
-                        global.setCanChat(true);
-                        announcement.setCanChat(true);
-                        if(subscriber != null){
-                            subscriber.setCanChat(true);
-                        }
-                    }
-                    GagManager.ungag(matchedPlayer);
+                if(p.hasPermission("chitchat.admin.mute")) {
+                    p.sendMessage(sender.getName() + " muted " + matchedPlayer.getName() + " for " + minutes + " minutes.");
                 }
-            },durationTicks);
+            }
         }
+        
         return true;
     }
 }

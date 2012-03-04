@@ -6,10 +6,9 @@ import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
 
-public class AnnouncementChannel extends PrefixChannel {
+public class AnnouncementChannel extends PermanentChannel {
     public AnnouncementChannel(Player player){
-        super(player,"Announcement","!");
-        this.color(ChatColor.RED);
+        super(player, "Announcement", "!", ChatColor.RED);
     }
 
     @Override
