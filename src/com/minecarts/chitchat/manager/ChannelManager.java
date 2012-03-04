@@ -19,7 +19,7 @@ public class ChannelManager {
     private static HashMap<Player, Boolean> loginJoinLock = new HashMap<Player, Boolean>();
 
     public static Boolean isChannelNameJoinRestricted(String channelName){
-        return channelName.equalsIgnoreCase("Subscriber") || channelName.equalsIgnoreCase("Admin");
+        return channelName.equalsIgnoreCase("Subscribers") || channelName.equalsIgnoreCase("Admin");
     }
     
 //Join query locking

@@ -185,7 +185,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         if(event.getPermissible() instanceof Player) {
             Player player = (Player) event.getPermissible();
             
-            PrefixChannel subscriber = new PermanentChannel(player, "Subscriber", "$", ChatColor.GREEN);
+            PrefixChannel subscriber = new PermanentChannel(player, "Subscribers", "$", ChatColor.GREEN);
             if(player.hasPermission("subscriber")) {
                 if(!subscriber.hasPlayer()) {
                     subscriber.join(true, true);
