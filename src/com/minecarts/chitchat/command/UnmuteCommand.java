@@ -31,12 +31,8 @@ public class UnmuteCommand implements CommandExecutor {
 
             Player matchedPlayer = matches.get(0);
             MuteManager.unmute(matchedPlayer); //Store the gag to auto gag on login
-            
-            for(Player p : Bukkit.getOnlinePlayers()){
-                if(p.hasPermission("chitchat.admin.mute")) {
-                    p.sendMessage(sender.getName() + " unmuted " + matchedPlayer.getName() + ".");
-                }
-            }
+
+            Bukkit.getServer().broadcast(sender.getName() + " unmuted " + matchedPlayer.getName() + ".","chitchat.admin.mute");
         }
 
         return true;
