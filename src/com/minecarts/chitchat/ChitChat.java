@@ -112,7 +112,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         event.setCancelled(true); //Cancel the event becuase we handled it
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(PlayerChatEvent e){
         //WorldEdit CUI needs to see some data that's passed via chat and handled by the plugin??
         if(StringUtils.left(e.getMessage(),5).equalsIgnoreCase("u00a7")) return;
@@ -124,7 +124,7 @@ public class ChitChat extends JavaPlugin implements Listener {
     }
 
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent e){
         final Player player = e.getPlayer();
         ChannelManager.setJoinLocked(player,true);
@@ -133,7 +133,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         this.joinPlayerToDynamicChannels(player,false);
         this.dbLoadIgnores(player);
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerKick(PlayerKickEvent e){
         ArrayList<Channel> channels = ChannelManager.getPlayerChannels(e.getPlayer());
         if(channels == null) return;
@@ -142,7 +142,7 @@ public class ChitChat extends JavaPlugin implements Listener {
         }
         ChannelManager.clearPlayerChannels(e.getPlayer());
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent e){
         ArrayList<Channel> channels = ChannelManager.getPlayerChannels(e.getPlayer());
         if(channels == null) return;
