@@ -10,6 +10,8 @@ public class MuteManager {
     private static Map<Player, Date> mutedPlayers = new HashMap<Player, Date>();
     
     public static Boolean isMuted(Player player) {
+        if(player.hasPermission("chitchat.mute")) return true;
+        
         Date expires = mutedPlayers.get(player);
         if(expires == null) return false;
         

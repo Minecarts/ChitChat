@@ -37,6 +37,9 @@ public class ChitChat extends JavaPlugin implements Listener {
     public void onEnable(){
         plugin = this;
         
+        // load config and copy plugin's default config values to it
+        getConfig().options().copyDefaults(true);
+        
         dbq = (DBQuery) getServer().getPluginManager().getPlugin("DBQuery");
         getServer().getPluginManager().registerEvents(this,this);
         

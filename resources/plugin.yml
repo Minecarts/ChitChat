@@ -1,10 +1,14 @@
 name: ChitChat
+description: An improved chat plugin
+website: http://www.minecarts.com/
+author: verrier, megabytes
+
 main: com.minecarts.chitchat.ChitChat
 version: ${pom.version}
-website: http://minecarts.com
-author: Verrier
 depend: [DBQuery]
-description: An improved chat plugin
+softdepend: [DBPermissions]
+
+
 commands:
     channel:
         aliases: [ch]
@@ -52,6 +56,8 @@ commands:
         aliases: [tip]
         description: Give a hint to a player
         usage: /<command> [player] [msg]
+        
+        
 permissions:
     chitchat.admin.*:
         description: "Access to all ChitChat admin commands"
@@ -94,3 +100,6 @@ permissions:
     chitchat.announcement.chat:
         description: "Allows chatting in the announcement channel"
         default: op
+    chitchat.mute:
+        description: "Always muted from permanent channels"
+        default: false
