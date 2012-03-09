@@ -47,7 +47,7 @@ abstract public class Channel {
     public Set<String> getMemberNames(Player visibleCheck){
         Set<String> members = new HashSet<String>();
         for(Player p : this.getLink().getMembers()){
-            if(!p.canSee(visibleCheck)) continue;
+            if(!visibleCheck.canSee(p)) continue;
             members.add(p.getDisplayName() + this.color());
         }
         return members;
