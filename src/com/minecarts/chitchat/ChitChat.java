@@ -84,7 +84,7 @@ public class ChitChat extends JavaPlugin implements Listener {
             PrefixChannel channel = ChannelManager.getChannelFromPrefix(player, args[1]);
             if(channel == null) return; //If no channel, let /who plugin handle it
             player.sendMessage(channel.color() + "---- Players in " +channel.getName() +" (" + channel.getPrefix() + ") -----");
-            player.sendMessage(StringUtils.join(channel.getMemberNames(player),", "));
+            player.sendMessage(StringUtils.join(channel.getMemberNames(player), channel.color() + ", "));
             event.setCancelled(true);
             return;
         }

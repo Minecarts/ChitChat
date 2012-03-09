@@ -44,21 +44,22 @@ abstract public class Channel {
     }
 
 
-    public Set<String> getMemberNames(Player visibleCheck){
-        Set<String> members = new HashSet<String>();
-        for(Player p : this.getLink().getMembers()){
-            if(!visibleCheck.canSee(p)) continue;
-            members.add(p.getDisplayName() + this.color());
+    public Set<String> getMemberNames(Player player){
+        Set<String> names = new HashSet<String>();
+        for(Player member : this.getLink().getMembers()){
+            if(player.canSee(member)) {
+                names.add(member.getDisplayName());
+            }
         }
-        return members;
+        return names;
     }
     
     public Set<String> getMemberNames(){
-        Set<String> members = new HashSet<String>();
-        for(Player p : this.getLink().getMembers()){
-            members.add(p.getDisplayName() + this.color());
+        Set<String> names = new HashSet<String>();
+        for(Player member : this.getLink().getMembers()){
+            names.add(member.getDisplayName());
         }
-        return members;
+        return names;
     }
     
     public boolean hasPlayer() {
