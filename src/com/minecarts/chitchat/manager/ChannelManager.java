@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 public class ChannelManager {
     private static HashMap<String, ChannelLink> activeChannelLinks = new HashMap<String, ChannelLink>();
@@ -86,6 +87,10 @@ public class ChannelManager {
 
 
     public static void setDefaultPlayerChannel(Player player, Channel channel){
+        if(channel == null){
+            ChitChat.getPlugin().getLogger().log(Level.WARNING,"Attempted to set channel to a null channel for " + player.getName());
+            return;
+        }
         defaultChannelMap.put(player,channel);
     }
 
@@ -93,7 +98,11 @@ public class ChannelManager {
         if(defaultChannelMap.containsKey(player)){
             return defaultChannelMap.get(player);
         } else {
-            return getOrCreateChannelLink("Global").getPlayerChannel(player);
+            Channel global = getOrCreateChannelLink("Global").getPlayerChannel(player);
+            if(global == null){
+                return ChannelManager.getPlayerChannels(player).get(0);
+            }
+            return global;
         }
     }
     
