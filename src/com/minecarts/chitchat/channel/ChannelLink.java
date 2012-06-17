@@ -2,6 +2,7 @@ package com.minecarts.chitchat.channel;
 
 import com.minecarts.chitchat.manager.ChannelManager;
 import com.minecarts.chitchat.manager.IgnoreManager;
+import com.minecarts.chitchat.manager.MuteManager;
 import com.minecarts.chitchat.manager.SpamManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -100,6 +101,7 @@ public class ChannelLink {
         List<Player> taggedList = Arrays.asList(taggedPlayers);
         if(taggedPlayers != null && taggedPlayers.length > 0){
             SpamManager.checkSpam(taggedList.get(0));
+            if(MuteManager.isMuted(taggedList.get(0))) return;
         }
 
         //Handle formatting for console logging
@@ -154,6 +156,7 @@ public class ChannelLink {
                 return;
             }
             SpamManager.checkSpam(taggedList.get(0));
+            if(MuteManager.isMuted(taggedList.get(0))) return;
         }
 
         for(Channel channel : this.members.values()){
