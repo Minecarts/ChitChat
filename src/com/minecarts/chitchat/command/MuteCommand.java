@@ -47,7 +47,7 @@ public class MuteCommand implements CommandExecutor {
 
             MuteManager.mute(matchedPlayer, (long) (1000 * 60 * minutes)); //Store the gag to auto gag on login
             
-            Bukkit.getServer().broadcast(sender.getName() + " muted " + matchedPlayer.getName() + " for " + minutes + " minutes.","chitchat.admin.mute");
+            Bukkit.broadcast(sender.getName() + " muted " + matchedPlayer.getName() + " for " + minutes + " minutes.", "chitchat.admin.mute");
         }
         
         return true;

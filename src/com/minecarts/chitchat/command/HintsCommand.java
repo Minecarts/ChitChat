@@ -31,7 +31,7 @@ public class HintsCommand implements CommandExecutor {
             Player player = playerMatches.get(0);
             player.sendMessage(ChatColor.AQUA + "[TIP] " + ChatColor.GRAY + message);
             //sender.sendMessage(ChatColor.GRAY + " > " + player.getDisplayName() + ": " + message);
-            Bukkit.broadcast(ChatColor.GRAY + "Tip: " + sender.getName() + " > " + player.getName() + ": " + message,"chitchat.admin.hint");
+            Bukkit.broadcast(ChatColor.GRAY + "Tip: " + sender.getName() + " > " + player.getName() + ": " + message, "chitchat.admin.hint");
         } else {
             sender.sendMessage("Could not find anyone online by that name.");
         }
