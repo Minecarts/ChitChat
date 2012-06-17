@@ -98,11 +98,15 @@ public class ChannelLink {
         }
     }
     public void relayMessage(Player[] taggedPlayers, String format, String... args){
+        boolean isMuted = false;
+        
         List<Player> taggedList = Arrays.asList(taggedPlayers);
         if(taggedPlayers != null && taggedPlayers.length > 0){
             SpamManager.checkSpam(taggedList.get(0));
-            if(MuteManager.isMuted(taggedList.get(0))) return;
+            
+            if(MuteManager.isMuted(taggedList.get(0))) isMuted = true;
         }
+        
 
         //Handle formatting for console logging
             if(args != null){
@@ -116,6 +120,8 @@ public class ChannelLink {
 
 
         for(Channel channel : this.members.values()){
+            if(isMuted && channel instanceof PermanentChannel) continue;
+            
             //Check ignores
             boolean hasIgnore = false;
             for(Player p : taggedPlayers){
@@ -148,6 +154,8 @@ public class ChannelLink {
         }
     }
     public void relayMessage(Player[] taggedPlayers, String message){
+        boolean isMuted = false;
+        
         //We have to handle messages here ourselves because players can exploit messageFormat by sending a formatted message
         //TODO Clean this up, someday
         List<Player> taggedList = Arrays.asList(taggedPlayers);
@@ -156,10 +164,13 @@ public class ChannelLink {
                 return;
             }
             SpamManager.checkSpam(taggedList.get(0));
-            if(MuteManager.isMuted(taggedList.get(0))) return;
+            
+            if(MuteManager.isMuted(taggedList.get(0))) isMuted = true;
         }
 
         for(Channel channel : this.members.values()){
+            if(isMuted && channel instanceof PermanentChannel) continue;
+            
             //Check ignores
             boolean hasIgnore = false;
             for(Player p : taggedPlayers){
