@@ -20,7 +20,10 @@ public class ChannelManager {
     private static HashMap<Player, Boolean> loginJoinLock = new HashMap<Player, Boolean>();
 
     public static Boolean isChannelNameJoinRestricted(String channelName){
-        return channelName.equalsIgnoreCase("Subscribers") || channelName.equalsIgnoreCase("Admin");
+        // this is bad, please change this to check for PermanentChannels instead of hardcoded values
+        return channelName.equalsIgnoreCase("Subscribers")
+                || channelName.equalsIgnoreCase("Admin")
+                || channelName.equalsIgnoreCase("Announcement");
     }
     
 //Join query locking
